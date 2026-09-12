@@ -108,15 +108,34 @@ position: sticky;    /* acts relative until a scroll threshold, then sticks like
 
 Pseudo-classes (single colon) target elements that already exist based on state or position. Pseudo-elements (double colon) target parts of the page that aren't real HTML elements.
 
+**Note on colons**: older resources (like Shay Howe's site, written pre-CSS3) sometimes use a single colon for pseudo-elements too (`:before` instead of `::before`). Browsers still support the single-colon form for backwards compatibility, but `::` is the current standard — that's what's used everywhere below.
+
+### Pseudo-classes
+
 - `:hover`, `:focus`, `:active` — interaction states
 - `:link`, `:visited` — unvisited vs. visited links
-- `:first-child`, `:last-child`, `:nth-child(n)` — target by position among siblings
-- `:only-child`, `:empty` — no siblings / no children at all
+- `:enabled`, `:disabled` — form inputs that are/aren't available for interaction
+- `:checked` — a checked checkbox or radio button
+- `:indeterminate` — a checkbox/radio that's neither checked nor unchecked (a "partial" UI state, usually set via JS)
+- `:first-child`, `:last-child` — first/last element among its siblings, regardless of type
+- `:only-child` — the only element inside its parent (no siblings at all)
+- `:first-of-type`, `:last-of-type`, `:only-of-type` — like the `-child` versions, but only counts siblings **of the same element type**. e.g. `p:first-of-type` finds the first `<p>` in a parent even if other elements (headings, divs) come before it
+- `:nth-child(n)` — the nth element counting **all** sibling types from the start
+- `:nth-last-child(n)` — same idea, but counts from the **end** of the parent instead
+- `:nth-of-type(n)`, `:nth-last-of-type(n)` — like `nth-child`, but only counts siblings of the same type
+- `:empty` — an element with zero children and zero text content (not even whitespace)
+- `:not(selector)` — negation, selects anything that does NOT match
+- `:target` — matches an element whose `id` matches the current URL's `#fragment` (e.g. clicking a link to `page.html#section2` lets you style `#section2:target`)
 - `:root` — top of the document (basically `html`), the usual home for CSS variables
+
+**`nth-child()` expression cheatsheet**: `n` is a counter starting at 0. `2n` = every 2nd element (even), `2n+1` = odd, `3n` = every 3rd, a plain number like `4` = just the 4th element. `-n+5` = the first 5 elements (counts backwards from 5).
+
+### Pseudo-elements
+
 - `::before`, `::after` — inject generated content (needs `content: "";` to show)
 - `::marker` — style list bullets/numbers
 - `::first-letter`, `::first-line` — style just the first letter/line of text
-- `::selection` — style highlighted/selected text
+- `::selection` — style highlighted/selected text (only `color`, `background`/`background-color`, and `text-shadow` work here — `background-image` is ignored)
 
 ```css
 .item::before {
@@ -133,6 +152,8 @@ img[src] { }            /* combine with an element */
 [class^="aus"] { }      /* ^= starts with */
 [src$=".jpg"] { }       /* $= ends with */
 [for*="ill"] { }        /* *= contains, anywhere in the string */
+[rel~="tag"] { }        /* ~= one word in a space-separated list matches exactly, e.g. rel="tag nofollow" */
+[lang|="en"] { }        /* |= exact match OR starts with value followed by a hyphen, e.g. lang="en-US" */
 ```
 
 ## Selector Reference (from CSS Diner)
