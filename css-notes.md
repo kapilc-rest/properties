@@ -80,6 +80,42 @@
 - `content` → `padding` → `border` → `margin` (inside to outside)
 - `box-sizing: border-box;` makes padding/border count *inside* the width (usually what you want)
 
+## Specificity (why my CSS isn't applying)
+
+Higher specificity wins, regardless of order in the file:
+
+1. Inline styles (`style="..."`) — highest
+2. IDs (`#id`)
+3. Classes, attributes, pseudo-classes (`.class`, `[type="text"]`, `:hover`)
+4. Elements/tags (`div`, `p`) — lowest
+5. `!important` overrides everything (avoid using it — it's a last resort, makes debugging harder later)
+
+If two rules have equal specificity, the one **later in the file** wins.
+
+## Position
+
+```css
+position: static;   /* default — normal flow, top/left/etc do nothing */
+position: relative;  /* offsets from its own normal position, still takes up original space */
+position: absolute;  /* removed from flow, positioned relative to nearest positioned ancestor */
+position: fixed;     /* positioned relative to the viewport, stays put on scroll */
+position: sticky;    /* acts relative until a scroll threshold, then sticks like fixed */
+```
+
+- `absolute` needs a `relative` (or other non-static) ancestor to position against — otherwise it positions against the whole page.
+
+## Pseudo-classes & Pseudo-elements
+
+- `:hover`, `:focus`, `:active` — interaction states
+- `:first-child`, `:last-child`, `:nth-child(n)` — target by position among siblings
+- `::before`, `::after` — inject generated content (needs `content: "";` to show)
+
+```css
+.item::before {
+  content: "→ ";
+}
+```
+
 ## Random Gotchas / Things I Learned the Hard Way
 
 - (add stuff here as you hit weird bugs)
