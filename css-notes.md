@@ -106,14 +106,33 @@ position: sticky;    /* acts relative until a scroll threshold, then sticks like
 
 ## Pseudo-classes & Pseudo-elements
 
+Pseudo-classes (single colon) target elements that already exist based on state or position. Pseudo-elements (double colon) target parts of the page that aren't real HTML elements.
+
 - `:hover`, `:focus`, `:active` — interaction states
+- `:link`, `:visited` — unvisited vs. visited links
 - `:first-child`, `:last-child`, `:nth-child(n)` — target by position among siblings
+- `:only-child`, `:empty` — no siblings / no children at all
+- `:root` — top of the document (basically `html`), the usual home for CSS variables
 - `::before`, `::after` — inject generated content (needs `content: "";` to show)
+- `::marker` — style list bullets/numbers
+- `::first-letter`, `::first-line` — style just the first letter/line of text
+- `::selection` — style highlighted/selected text
 
 ```css
 .item::before {
   content: "→ ";
 }
+```
+
+## Attribute Selectors
+
+```css
+[src] { }              /* has the attribute, any value */
+img[src] { }            /* combine with an element */
+[src="puppy.jpg"] { }   /* exact match */
+[class^="aus"] { }      /* ^= starts with */
+[src$=".jpg"] { }       /* $= ends with */
+[for*="ill"] { }        /* *= contains, anywhere in the string */
 ```
 
 ## Selector Reference (from CSS Diner)
