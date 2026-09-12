@@ -116,6 +116,31 @@ position: sticky;    /* acts relative until a scroll threshold, then sticks like
 }
 ```
 
+## Selector Reference (from CSS Diner)
+
+All selector types used across CSS Diner's 32 levels:
+
+| Selector | Meaning |
+|---|---|
+| `*` | Universal — selects everything |
+| `element` | Type selector — e.g. `plate` |
+| `.class` | Class selector |
+| `#id` | ID selector |
+| `element.class` | Element with a specific class |
+| `A, B` | Comma combinator — selects A **and** B |
+| `A B` | Descendant selector — B inside A, any depth |
+| `A > B` | Child selector — B is a **direct** child of A |
+| `A + B` | Adjacent sibling — B immediately follows A |
+| `A ~ B` | General sibling — B follows A at any distance (same parent) |
+| `[attr]` | Attribute selector — has the attribute |
+| `[attr="value"]` | Attribute equals value |
+| `:first-child` | First child of its parent |
+| `:last-child` | Last child of its parent |
+| `:only-child` | The only child of its parent |
+| `:nth-child(n)` | The nth child (n can be a number, `even`, `odd`, or a formula like `3n`) |
+| `:first-of-type` | First element of its type among siblings |
+| `:not(selector)` | Negation — selects everything that does NOT match |
+
 ## Random Gotchas / Things I Learned the Hard Way
 
 - (add stuff here as you hit weird bugs)
