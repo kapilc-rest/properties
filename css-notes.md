@@ -9,6 +9,7 @@
 - `vw` / `vh` — relative to viewport width/height (1vw = 1% of viewport width)
 - `rem` — relative to root (`html`) font size
 - `em` — relative to parent's font size
+- `ch` — relative to the width of the `0` character in the current font. Useful for capping text line-length in a readable range (see Functions section below).
 
 ## Media Queries
 
@@ -77,6 +78,10 @@
 - `min()` — takes a comma-separated list, returns the **smallest**. Good for responsive sizing: `width: min(150px, 100%);` means "150px, but never wider than the parent." Can do basic math inline without needing `calc()`: `width: min(80ch, 100vw - 2rem);`
 - `max()` — same idea, returns the **largest**. Useful for accessibility — ensures something doesn't shrink below a usable size even if the viewport is tiny or the user has zoomed in.
 - `clamp(min, preferred, max)` — takes 3 values: a floor, a flexible "ideal" value (often a viewport-relative unit like `vw`), and a ceiling. E.g. `font-size: clamp(1.5rem, 5vw, 3rem);` scales the font with the viewport width but never goes below 1.5rem or above 3rem.
+
+**Practical pattern — readable line width**: readable text blocks are usually 45–75 characters wide. `width: clamp(45ch, 50%, 75ch);` keeps a paragraph at 50% of its container by default, but never narrower than 45 characters or wider than 75 — using the `ch` unit means the limits scale with the font itself, not just the viewport.
+
+**Accessibility warning**: capping a font's max size with `max()` or `clamp()` can technically block users from zooming text up to 200%, which fails WCAG 1.4.4 (Resize Text). Worth testing with the browser's zoom before relying on it for headline/title sizing.
 
 **Other useful CSS functions** (from the full MDN list — most CSS functions are pretty niche, these are the ones worth knowing):
 
