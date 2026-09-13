@@ -54,6 +54,11 @@
 ```
 Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names), and doesn't let the user override it manually — it just reflects the OS/browser setting.
 
+**More gotchas (from MDN):**
+- `var()` can't be used in a media/container query **condition** (`@media (min-width: var(--bp))` doesn't work) — only as a property *value*.
+- A fallback can itself contain commas: `var(--foo, red, blue)` treats everything after the first comma as one fallback value — handy when the fallback needs to be comma-separated, like a `font-family` list.
+- If a `var()` substitution results in an invalid value for that property (e.g. a number where a color is expected), the browser falls back to the property's normal initial/inherited value — same as any other invalid CSS declaration.
+
 ## Flexbox
 
 ```css
