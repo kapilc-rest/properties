@@ -35,9 +35,24 @@
 }
 ```
 
-- Defined with `--name: value;`
+- Defined with `--name: value;` (kebab-case, case-sensitive, no spaces)
 - Used with `var(--name)`
-- Usually declared on `:root` so they're global
+- Usually declared on `:root` so they're global — `:root` is basically the same as `html`, but with higher specificity
+- **Scope**: a custom property is only usable on the selector it's declared on, plus that selector's descendants — not siblings or ancestors. Declaring `--main-bg` inside `.card` means only `.card` and things nested inside it can use `var(--main-bg)`.
+- **Fallback values**: `var()` takes an optional 2nd argument used if the property is invalid or undeclared — `color: var(--undeclared, black);`. Fallbacks can nest: `var(--a, var(--b, yellow))` tries `--a`, then `--b`, then falls back to `yellow`.
+
+**Theming pattern**: declare two sets of the same variable names under different scopes (e.g. `.dark { --bg: black; }` / `.light { --bg: white; }`), then toggle the class on `html`/`body`. Everything referencing `var(--bg)` updates automatically. Can also respond to the OS-level theme setting with a media query:
+```css
+:root {
+  --bg: white; /* default/light theme */
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: black;
+  }
+}
+```
+Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names), and doesn't let the user override it manually — it just reflects the OS/browser setting.
 
 ## Flexbox
 
