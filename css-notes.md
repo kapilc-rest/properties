@@ -50,6 +50,8 @@
 }
 ```
 
+**Flexbox vs Position**: flexbox arranges elements *in relation to each other* (rows, columns, spacing) and stays responsive as content/screen size changes. `position` places one specific element precisely, possibly overlapping others, but requires manual pixel values and doesn't adapt automatically. Real layouts use both — flexbox for overall structure, `position: absolute` for the occasional badge/overlay inside a flex container.
+
 ## Grid
 
 ```css
