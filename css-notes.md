@@ -83,6 +83,13 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 }
 ```
 
+## Browser Compatibility
+
+- Different browsers use different rendering engines — Chrome/Chromium-based browsers (Edge, Brave, etc.) use **Blink**, Safari uses **WebKit**, Firefox uses **Gecko**. A feature can work in one and not another.
+- **[caniuse.com](https://caniuse.com)** — check before using a newer CSS feature to see which browsers/versions support it. Good habit: check this before relying on something unfamiliar.
+- **iOS is a special case**: every browser on iOS/iPadOS (Chrome, Firefox, etc.) is required to use Safari's WebKit engine under the hood, regardless of branding. So "does it work in Safari" effectively covers all iOS browsers — but desktop Safari and mobile Safari aren't identical either, so test both if targeting Apple users.
+- **Emulating devices in dev tools only mimics screen size** — it doesn't reproduce the actual OS/browser engine quirks of a real device. Something that looks fine in an emulated iPhone view in Chrome could still behave differently on an actual iPhone.
+
 ## Selectors
 
 - `.class` — class selector
