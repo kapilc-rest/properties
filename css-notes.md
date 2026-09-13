@@ -73,9 +73,10 @@
 
 ## Functions
 
-- `calc()` — do math in CSS, e.g. `width: calc(100% - 20px);`
-- `clamp(min, preferred, max)` — responsive value with limits
-- `min()` / `max()` — pick smallest/largest of given values
+- `calc()` — do math in CSS, and can **mix units** in one expression, e.g. `width: calc(100% - 20px);`. Can also be nested: `calc(100vh - calc(var(--header) + var(--footer)))`.
+- `min()` — takes a comma-separated list, returns the **smallest**. Good for responsive sizing: `width: min(150px, 100%);` means "150px, but never wider than the parent." Can do basic math inline without needing `calc()`: `width: min(80ch, 100vw - 2rem);`
+- `max()` — same idea, returns the **largest**. Useful for accessibility — ensures something doesn't shrink below a usable size even if the viewport is tiny or the user has zoomed in.
+- `clamp(min, preferred, max)` — takes 3 values: a floor, a flexible "ideal" value (often a viewport-relative unit like `vw`), and a ceiling. E.g. `font-size: clamp(1.5rem, 5vw, 3rem);` scales the font with the viewport width but never goes below 1.5rem or above 3rem.
 
 ## Box Model
 
