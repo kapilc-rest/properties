@@ -106,6 +106,8 @@ position: sticky;    /* acts relative until a scroll threshold, then sticks like
 
 **Why use `absolute` instead of `static`**: `static` elements can never overlap — they just flow one after another. `absolute` lets you layer things on top of other content (badges on a card corner, tooltips, dropdown menus, full-bleed overlays on an image) without disturbing the normal layout around them, and gives exact pixel placement that `static` can't.
 
+**Common mix-up**: `absolute` and `fixed` both pull the element out of flow, but they anchor to different things. `absolute` → nearest positioned ancestor (or the whole page if none exists). `fixed` → always the browser viewport, which is why sticky headers/navbars use `fixed`, not `absolute` — you want them tracking the screen, not some parent container.
+
 ## Pseudo-classes & Pseudo-elements
 
 Pseudo-classes (single colon) target elements that already exist based on state or position. Pseudo-elements (double colon) target parts of the page that aren't real HTML elements.
