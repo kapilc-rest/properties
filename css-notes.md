@@ -90,6 +90,12 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 - **iOS is a special case**: every browser on iOS/iPadOS (Chrome, Firefox, etc.) is required to use Safari's WebKit engine under the hood, regardless of branding. So "does it work in Safari" effectively covers all iOS browsers — but desktop Safari and mobile Safari aren't identical either, so test both if targeting Apple users.
 - **Emulating devices in dev tools only mimics screen size** — it doesn't reproduce the actual OS/browser engine quirks of a real device. Something that looks fine in an emulated iPhone view in Chrome could still behave differently on an actual iPhone.
 
+## Frameworks and Preprocessors
+
+**Frameworks** (Bootstrap, Tailwind, Bulma, Foundation) — pre-written CSS bundled into reusable classes, e.g. a `.btn` class that fully styles a button with zero custom CSS. Bootstrap-style frameworks hand you whole components (dropdowns, cards); Tailwind's "utility-first" approach gives tiny single-purpose classes instead. Downsides: sites built with the same framework tend to look similar, and learning a framework before CSS fundamentals are solid makes it hard to debug or override its styles later — better to get comfortable with vanilla CSS first.
+
+**Preprocessors** (SASS, LESS, Stylus) — a language layered on top of CSS that compiles down to regular CSS, adding things like loops, conditionals, and nesting. Note: several of their historical selling points (variables, nesting) now exist natively in vanilla CSS, so the case for learning one is weaker than it used to be — only worth it for genuinely missing features.
+
 ## Selectors
 
 - `.class` — class selector
