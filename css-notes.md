@@ -110,6 +110,12 @@ position: sticky;    /* acts relative until a scroll threshold, then sticks like
 
 **Common mix-up**: `absolute` and `fixed` both pull the element out of flow, but they anchor to different things. `absolute` → nearest positioned ancestor (or the whole page if none exists). `fixed` → always the browser viewport, which is why sticky headers/navbars use `fixed`, not `absolute` — you want them tracking the screen, not some parent container.
 
+**Gotchas (from MDN):**
+- `sticky` needs at least one of `top`/`right`/`bottom`/`left` set to something other than `auto`, or it just behaves like `relative` (no sticking).
+- `sticky` sticks to its nearest **scrolling ancestor** (an ancestor with `overflow: hidden/scroll/auto`) — not necessarily the whole page.
+- Any non-`static` position value creates a new **stacking context**, which affects how `z-index` layers work with siblings elsewhere on the page.
+- `fixed`/`sticky` elements have to be repainted by the browser on every scroll frame, which can cause jank (stutter) on slower devices — worth keeping an eye on if a sticky/fixed element feels laggy.
+
 ## Pseudo-classes & Pseudo-elements
 
 Pseudo-classes (single colon) target elements that already exist based on state or position. Pseudo-elements (double colon) target parts of the page that aren't real HTML elements.
