@@ -105,6 +105,7 @@ position: sticky;    /* acts relative until a scroll threshold, then sticks like
 ```
 
 - `absolute` needs a `relative` (or other non-static) ancestor to position against — otherwise it positions against the whole page.
+- `z-index` has **no effect on `static` elements** — an element needs `position: relative/absolute/fixed/sticky` before `z-index` does anything. This is also why setting `position: relative;` on an element (even with no `top`/`left` values) makes it render on top of any `static` siblings by default.
 
 **Why use `absolute` instead of `static`**: `static` elements can never overlap — they just flow one after another. `absolute` lets you layer things on top of other content (badges on a card corner, tooltips, dropdown menus, full-bleed overlays on an image) without disturbing the normal layout around them, and gives exact pixel placement that `static` can't.
 
