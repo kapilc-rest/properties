@@ -78,6 +78,16 @@
 - `max()` — same idea, returns the **largest**. Useful for accessibility — ensures something doesn't shrink below a usable size even if the viewport is tiny or the user has zoomed in.
 - `clamp(min, preferred, max)` — takes 3 values: a floor, a flexible "ideal" value (often a viewport-relative unit like `vw`), and a ceiling. E.g. `font-size: clamp(1.5rem, 5vw, 3rem);` scales the font with the viewport width but never goes below 1.5rem or above 3rem.
 
+**Other useful CSS functions** (from the full MDN list — most CSS functions are pretty niche, these are the ones worth knowing):
+
+- `rgb()` / `hsl()` — define colors by red/green/blue or hue/saturation/lightness (+ optional alpha for transparency)
+- `linear-gradient()` / `radial-gradient()` — generate a gradient image, usable as a `background`
+- `color-mix(in srgb, red 50%, blue)` — blend two colors together, handy for hover states derived from a base color
+- `translate()` / `rotate()` / `scale()` — move, rotate, or resize an element via the `transform` property, without affecting layout flow (great for animations/hover effects since they don't trigger reflow the way changing `top`/`left`/`width` does)
+- `attr()` — pulls an HTML attribute's value into CSS, most commonly with `content` in `::before`/`::after` (e.g. showing a link's `href` next to it)
+- `url()` — references an external resource (image, font, SVG) — `background-image: url("photo.jpg");`
+- `repeat()` / `minmax()` — used inside `grid-template-columns` to avoid repeating yourself and to set flexible column/row sizes with a floor and ceiling
+
 ## Box Model
 
 - `content` → `padding` → `border` → `margin` (inside to outside)
