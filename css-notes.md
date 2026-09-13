@@ -116,6 +116,8 @@ position: sticky;    /* acts relative until a scroll threshold, then sticks like
 - Any non-`static` position value creates a new **stacking context**, which affects how `z-index` layers work with siblings elsewhere on the page.
 - `fixed`/`sticky` elements have to be repainted by the browser on every scroll frame, which can cause jank (stutter) on slower devices — worth keeping an eye on if a sticky/fixed element feels laggy.
 
+**When to use `fixed` vs `sticky`**: use `fixed` when something should stay in the exact same spot on screen no matter what (a chat bubble button, a floating "back to top" link). Use `sticky` when something should scroll normally, then stop once it hits an edge and stay in view while its section scrolls past (a section heading, a sidebar nav, a table header). The trade-off: `fixed` elements can quietly cover other content since they're totally out of flow — easy to miss on mobile where screen space is tight; `sticky` elements disappear once their parent container scrolls out of view, since they never leave that parent.
+
 ## Pseudo-classes & Pseudo-elements
 
 Pseudo-classes (single colon) target elements that already exist based on state or position. Pseudo-elements (double colon) target parts of the page that aren't real HTML elements.
