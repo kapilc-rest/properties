@@ -156,6 +156,32 @@ Gotcha: any button inside a `<form>` defaults to `type="submit"` — so a button
 
 **Styling challenges**: (1) every browser has different default form-control styles, so consistent cross-browser design requires overriding them yourself; (2) text-based inputs style easily like any element, but radio buttons/checkboxes are trickier to restyle, and some controls (like the native date picker calendar) can't be styled at all without rebuilding them in JS.
 
+Widgets fall into three rough tiers, from MDN: **easy to style** — `<form>`, `<fieldset>`/`<legend>`, single-line text inputs, `<textarea>`, buttons, `<label>`, `<output>`. **Harder to style** — checkboxes, radio buttons, `<input type="search">`. **Internals that CSS alone can't touch** — `color`, date pickers, `range`, `file` (though the file-picker's button can be styled via `::file-selector-button` — just not the filename text next to it), and everything involved in `<select>`'s native dropdown list.
+
+**Font inheritance gotcha**: form controls often don't inherit `font-family`/`font-size` from their parent by default — many browsers fall back to the OS's system font instead, which looks inconsistent with the rest of the page. Fix with:
+```css
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: 100%;
+}
+```
+
+**Consistent sizing across widget types**: each control has its own built-in border/padding/margin rules, so giving several different widgets (a text input, a select, a button) the same visual size takes `box-sizing: border-box` plus resetting padding/margin yourself:
+```css
+input, textarea, select, button {
+  width: 150px;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+```
+
+**Positioning `<legend>`**: it defaults to sitting on top of the `<fieldset>`'s top border. To move it (e.g. to a bottom corner), position the `<fieldset>` as `relative` and the `<legend>` as `absolute` relative to it — this only changes the *visual* position; screen readers still announce it as the fieldset's label either way.
+```css
+fieldset { position: relative; }
+legend { position: absolute; bottom: 0; right: 0; }
+```
+
 **Custom checkbox technique**: `appearance: none;` strips almost all native browser styling from an input while keeping it fully interactive (keyboard support, `:focus` state stay intact) — this is what unlocks styling the checkbox yourself. From there you build the checked-state indicator using a `::before` pseudo-element, toggled visible via the `:checked` selector:
 
 ```css
