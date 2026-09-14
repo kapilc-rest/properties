@@ -8,6 +8,8 @@
 - `%` — relative to parent element
 - `vw` / `vh` — relative to viewport width/height (1vw = 1% of viewport width)
 - `rem` — relative to root (`html`) font size
+
+**HTML attribute vs CSS property**: `width`/`height` written as HTML attributes on `<img>` (`<img width="300">`) only accept unitless numbers, always pixels — no `rem`/`%`/other units allowed there. As a CSS property (`img { width: 20rem; }`) any unit works normally. Worth keeping the HTML attributes set (even alongside CSS sizing) since they let the browser reserve the image's space before it loads, preventing layout shift — CSS alone doesn't give that early hint.
 - `em` — relative to parent's font size
 - `ch` — relative to the width of the `0` character in the current font. Useful for capping text line-length in a readable range (see Functions section below).
 
