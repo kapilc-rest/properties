@@ -116,6 +116,8 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 
 **Input types**: `text`, `email` (mobile keyboard adds @, validates format), `password` (masks characters), `number` (rejects non-numeric input), `date` (renders a date picker).
 
+**`inputmode` and `autocomplete`**: for data that's numeric-looking but shouldn't use `type="number"` (credit card numbers, PINs) — the spinner arrows are useless and it's too easy to accidentally bump the value — use `type="text" inputmode="numeric"` instead. This still triggers a numeric mobile keyboard without the unwanted spinner behavior. Pair with `autocomplete="cc-number"` (or other standard autocomplete values) to let the browser suggest previously saved values — something genuinely hard to replicate with custom JS.
+
 **`<textarea>` vs `<input type="text">`**: both accept text, but they're not interchangeable for multi-line content. `input type="text"` always strips line breaks before submitting — even paragraphs typed into it come out as one continuous line, so it's structurally wrong for anything meant to span multiple sentences (comments, bios, feedback). `<textarea>` genuinely preserves line breaks, gives the user a draggable resize handle by default, and uses `rows`/`cols` (line height/character width) instead of `input`'s `size` (single-line character width), since it's a 2D block rather than one line. It also has a real closing tag — initial content goes *between* the tags as text, not in a `value` attribute like `input` uses.
 
 ```html
@@ -302,7 +304,7 @@ Note: an empty-but-not-yet-touched required field also matches `:invalid` in mos
 ### Form Validation (built-in constraints)
 
 - **`required`** — field must have a value before the form submits. Always pair with a visible indicator (e.g. an asterisk on the label) so users know which fields are mandatory before they hit submit, not after. Matches the `:required` pseudo-class (useful for styling required fields distinctly, separate from valid/invalid state). For a group of same-named radio buttons, adding `required` to just one of them is enough to require the whole group — any radio in that group being checked satisfies it, not specifically the one with the attribute.
-- **`novalidate`** — an attribute on `<form>` itself that turns off the browser's automatic validation UI (no popup bubbles, no submission blocking) — useful when building fully custom error messages with JavaScript instead. Note: it only disables the automatic *behavior*; the `:valid`/`:invalid` pseudo-classes and constraint checks are still available to use manually.
+- **`novalidate`** — an attribute on `<form>` itself that turns off the browser's automatic validation UI (no popup bubbles, no submission blocking) — useful when building fully custom error messages with JavaScript instead. Note: it only disables the automatic *behavior*; the `:valid`/`:invalid` pseudo-classes and constraint checks are still available to use manually. **`formnovalidate`** does the same thing but scoped to a single submit/image button, rather than the whole form — handy for a "Save draft" button that should skip validation while the real "Submit" button still validates. Similarly, **`formaction`** on a submit/image button overrides the form's own `action` URL just for that button — useful when one form has multiple possible submit destinations (e.g. "Save" vs "Save and publish").
 - **`minlength` / `maxlength`** — min/max character count for text-based fields. Gotcha: `minlength` does **not** imply `required` — an empty field still passes `minlength` validation and submits fine, since constraint validation for length only kicks in once the user has actually typed something.
 - **`min` / `max`** — lower/upper bound for number-based controls (`number`, `range`, and the date/time family) — not usable on plain text fields. Each date/time type expects its own format for the value: `date` → `yyyy-mm-dd`, `month` → `yyyy-mm`, `week` → `yyyy-W##`, `time` → `HH:mm`, `datetime-local` → `yyyy-mm-ddTHH:mm`. Going out of range matches both `:invalid` and the more specific `:out-of-range` pseudo-class, so you can style range violations distinctly from other kinds of invalid input if it's useful. `<meter>`/`<progress>` also accept `min`/`max` (as plain attributes, not validation) — `<progress>`'s `max` defaults to `1` if omitted and must be a positive number.
 - **`pattern`** — takes a regex the value must match, usable only on `<input>` elements (not `<textarea>`). Some types have pattern-like validation built in already (`email`, `url`). Writing your own regex from scratch is usually more trouble than it's worth — better to search for an established, tested pattern for the format you need (zip code, phone number, etc.) than hand-roll one. Pair with `placeholder` to show an example of the expected format, since the browser's default error message ("Please match the requested format") doesn't explain what's actually wrong.
@@ -390,8 +392,14 @@ Pseudo-classes (single colon) target elements that already exist based on state 
 ### Pseudo-classes
 
 - `:hover`, `:focus`, `:active` — interaction states
+- `:focus-within` — matches a **parent** whose descendant currently has focus (e.g. highlight a whole form group when any of its inputs is focused)
+- `:focus-visible` — matches only when focus is visually necessary (keyboard navigation), not on every mouse click — avoids showing a focus ring on mouse clicks while still showing it for keyboard users
 - `:link`, `:visited` — unvisited vs. visited links
 - `:enabled`, `:disabled` — form inputs that are/aren't available for interaction
+- `:required`, `:optional` — has/doesn't have the `required` attribute
+- `:read-only`, `:read-write` — has/doesn't have `readonly` set
+- `:in-range`, `:out-of-range` — value is/isn't within a `min`/`max` bound (`number`/`range` inputs)
+- `:default` — the default submit button/image in a form, or an option/checkbox/radio marked `selected`/`checked` on page load
 - `:checked` — a checked checkbox or radio button
 - `:indeterminate` — a checkbox/radio that's neither checked nor unchecked (a "partial" UI state, usually set via JS)
 - `:first-child`, `:last-child` — first/last element among its siblings, regardless of type
@@ -413,6 +421,7 @@ Pseudo-classes (single colon) target elements that already exist based on state 
 - `::marker` — style list bullets/numbers
 - `::first-letter`, `::first-line` — style just the first letter/line of text
 - `::selection` — style highlighted/selected text (only `color`, `background`/`background-color`, and `text-shadow` work here — `background-image` is ignored)
+- `::placeholder` — styles an input's placeholder text specifically (e.g. `input[type="email"]::placeholder { color: blue; }`), independent of the actual typed value's styling
 
 ```css
 .item::before {
