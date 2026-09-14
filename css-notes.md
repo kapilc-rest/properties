@@ -113,7 +113,12 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 
 **Input types**: `text`, `email` (mobile keyboard adds @, validates format), `password` (masks characters), `number` (rejects non-numeric input), `date` (renders a date picker).
 
-**`<textarea>`**: multi-line text, unlike `<input>` it needs a closing tag (can hold default content between the tags). Takes `rows`/`cols` for initial size — users can still resize by dragging the corner.
+**`<textarea>` vs `<input type="text">`**: both accept text, but they're not interchangeable for multi-line content. `input type="text"` always strips line breaks before submitting — even paragraphs typed into it come out as one continuous line, so it's structurally wrong for anything meant to span multiple sentences (comments, bios, feedback). `<textarea>` genuinely preserves line breaks, gives the user a draggable resize handle by default, and uses `rows`/`cols` (line height/character width) instead of `input`'s `size` (single-line character width), since it's a 2D block rather than one line. It also has a real closing tag — initial content goes *between* the tags as text, not in a `value` attribute like `input` uses.
+
+```html
+<input type="text" value="pre-filled">
+<textarea>Pre-filled content goes here</textarea>
+```
 
 **Selection elements** — three common ways to let users pick from predefined options:
 - **`<select>`** + `<option>` — dropdown, best for longer lists. `value` on each option is what gets submitted; add `selected` to one option to default it. Group related options with `<optgroup label="...">`.
