@@ -96,6 +96,24 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 
 **Preprocessors** (SASS, LESS, Stylus) — a language layered on top of CSS that compiles down to regular CSS, adding things like loops, conditionals, and nesting. Note: several of their historical selling points (variables, nesting) now exist natively in vanilla CSS, so the case for learning one is weaker than it used to be — only worth it for genuinely missing features.
 
+**Native CSS nesting**: plain CSS now supports nesting selectors directly, no preprocessor required.
+```css
+.card {
+  padding: 1rem;
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  &:hover {
+    border-color: blue;
+  }
+}
+```
+- `&` refers to the parent selector — needed for combining with pseudo-classes (`&:hover`) or another class on the same element (`&.featured`). A plain nested type selector like `h2` above is automatically treated as a descendant selector without needing `&`.
+- Compiles down to regular flat CSS conceptually (`.card h2 { ... }`, `.card:hover { ... }`) — it's a writing convenience, not a new mechanism, and doesn't change how specificity is calculated.
+- Baseline-supported in modern browsers now, but check caniuse.com if older-browser support matters, since it's a relatively recent native CSS feature (SASS has supported nesting for far longer via compilation).
+
 ## Forms
 
 ```html
