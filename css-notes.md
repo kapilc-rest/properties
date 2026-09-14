@@ -190,6 +190,19 @@ Using `em` units and `currentColor` keeps the checkbox scaling with font size an
 | `name` | — | The submitted data's key. |
 | `value` | — | The control's initial value. |
 
+### HTML5 input types (added after the original set)
+
+- **`email`** — validates that the value looks like an email address before the form can submit; browsers show a built-in error otherwise. Add `multiple` to allow several comma-separated addresses in one field. Triggers the `@`-key mobile keyboard.
+- **`search`** — functionally like `text`, but styled differently (rounded corners, often a clear/✕ button once there's a value), and browsers may auto-save/suggest previous search terms entered on the same site.
+- **`tel`** — no format validation at all (phone number formats vary too much worldwide to enforce one), but still triggers the numeric keypad on mobile — useful for *any* numeric-style input where the `number` spinner UI isn't wanted, e.g. long ID/zip codes.
+- **`url`** — validates that a protocol (like `https://`) is present and the format is well-formed. Doesn't check that the URL actually resolves to a real page.
+- **`number`** — restricts to numeric input, shows spinner arrows, and adds `min`, `max`, `step` for constraining the range and increment. `step` defaults to `1` (whole numbers only) — use `step="0.01"` or `step="any"` for decimals. Best when the valid range is small (age, quantity); use `tel` instead for large ranges like ZIP codes where a spinner doesn't make sense.
+- **`range`** — a slider version of `number`, for cases where the *exact* value matters less than roughly where it falls in a range. Also uses `min`/`max`/`step`. Doesn't show the current value on its own — pair it with an `<output for="id">` element and a bit of JS to display the live value as the user drags.
+- **Date/time family** — `date` (year/month/day), `time` (24-hour value even if displayed as 12-hour), `datetime-local` (date + time, no timezone), `month`, `week`. All support `min`/`max`/`step` to constrain the range of selectable values.
+- **`color`** — opens the OS's native color picker; the submitted value is always a lowercase 6-digit hex code (e.g. `#ff0000`).
+
+**Client-side validation caveat**: types like `email`, `url`, and `number` validate in the browser before submission — genuinely helpful for user experience (catches typos immediately), but it is **not a security measure**. Client-side checks can be bypassed trivially (disabling JS, editing dev tools, sending a raw request), so the server must always re-validate any submitted data independently.
+
 ## Selectors
 
 - `.class` — class selector
