@@ -120,10 +120,24 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 <textarea>Pre-filled content goes here</textarea>
 ```
 
+`<textarea>` also takes a `wrap` attribute: `soft` (default — rendered text wraps visually, but the *submitted* value stays unwrapped as typed), `hard` (both rendered and submitted text get wrapped; requires `cols` to be set), `off` (no visual wrapping at all). Resizability itself is controlled by CSS, not an HTML attribute — the `resize` property (`both` default, `horizontal`, `vertical`, `none`) on the `<textarea>` selector.
+
 **Selection elements** — three common ways to let users pick from predefined options:
-- **`<select>`** + `<option>` — dropdown, best for longer lists. `value` on each option is what gets submitted; add `selected` to one option to default it. Group related options with `<optgroup label="...">`.
+- **`<select>`** + `<option>` — dropdown, best for longer lists. `value` on each option is what gets submitted; if omitted, the option's own text content is used as the value. Add `selected` to one option to default it. Group related options with `<optgroup label="...">`. Add `multiple` to let users select more than one option at once (standard OS multi-select, e.g. Ctrl/Cmd-click) — this also changes the rendering from a collapsed dropdown to a listbox showing several options at once; `size` controls how many rows are visible.
+- **Autocomplete box (`<datalist>`)**: pairs with a normal text input to offer suggested values without restricting input to only those choices (unlike `<select>`, users can still type something not in the list). Give the `<datalist>` an `id`, then point a `<input list="thatId">` at it:
+```html
+<input type="text" name="fruit" list="fruitOptions">
+<datalist id="fruitOptions">
+  <option>Apple</option>
+  <option>Banana</option>
+</datalist>
+```
 - **Radio buttons** (`type="radio"`) — best for 5 or fewer visible options. All radios sharing the same `name` become mutually exclusive (selecting one deselects the rest). `checked` sets the default.
 - **Checkboxes** (`type="checkbox"`) — like radios, but multiple can be selected at once. A single checkbox is also the standard pattern for a true/false toggle (e.g. "subscribe to newsletter").
+
+**Meter and progress bars** — visual, non-input elements for showing numeric values, not actually a data-entry control:
+- **`<meter min="0" max="100" value="75" low="33" high="66" optimum="0">`** — represents a fixed value within a range (disk space used, a rating). `low`/`high`/`optimum` let the browser color-code it (green/yellow/red) based on how good the current value is.
+- **`<progress max="100" value="75">`** — represents a value that changes over time toward a goal (file upload percentage, form completion). Simpler than `<meter>` — no color-coding logic, just a fill bar.
 
 **Buttons** — the `<button>` element takes a `type`:
 - `submit` (default if unspecified) — submits the form it's inside
