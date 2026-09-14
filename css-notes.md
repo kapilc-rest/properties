@@ -458,7 +458,7 @@ Pseudo-classes (single colon) target elements that already exist based on state 
 
 - `::before`, `::after` — inject generated content (needs `content: "";` to show)
 - `::marker` — style list bullets/numbers
-- `::first-letter`, `::first-line` — style just the first letter/line of text
+- `::first-letter`, `::first-line` — style just the first letter/line of text. Note: there's no `::last-line` equivalent — CSS has no way to know how many lines something wraps into until render time, so there's no reliable "last line" concept to target natively (would need JS measurement or manual markup restructuring instead).
 - `::selection` — style highlighted/selected text (only `color`, `background`/`background-color`, and `text-shadow` work here — `background-image` is ignored)
 - `::placeholder` — styles an input's placeholder text specifically (e.g. `input[type="email"]::placeholder { color: blue; }`), independent of the actual typed value's styling
 
