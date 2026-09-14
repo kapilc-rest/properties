@@ -311,6 +311,15 @@ Note: an empty-but-not-yet-touched required field also matches `:invalid` in mos
 - **`:user-valid` / `:user-invalid`** — like `:valid`/`:invalid`, but only activate **after the user has actually interacted with the field** (typed something, then blurred). This avoids the untouched-required-field problem `:invalid` has, without needing to layer on `:focus`/`:not(:placeholder-shown)` workarounds — generally the better default choice for validation styling.
 - Built-in HTML validation is genuinely useful but has real limits — it can't check things like "does this password match the confirm-password field" or "is this username already taken." Anything beyond single-field format/range checks needs custom JavaScript validation, and server-side validation is still required regardless, since client-side checks can always be bypassed.
 
+**Validation UX practices worth keeping in mind** (independent of the HTML/CSS mechanics above):
+- Show each error next to its own field, not bundled together in one place at the top — users shouldn't have to hunt for which message belongs to which input.
+- Don't disable the submit button while the form is "incomplete." Users may skip fields without realizing it; a disabled button gives no feedback on what's wrong. Let them click it and see the actual errors.
+- Positive feedback (a checkmark on a valid field) is as useful as negative feedback — confirms progress, not just failure.
+- Write error messages in plain language a user would say, not technical jargon ("Please match the requested format" tells them nothing useful).
+- Don't rely on color alone (e.g. a red border) to flag an error — pair it with an icon or text too, for colorblind users.
+- If password rules exist (length, symbols required, etc.), show them upfront before the user types, not only after they fail.
+- The best validation is the one that prevents mistakes in the first place — good input types, formatting hints, and constraints reduce how often users hit an error at all.
+
 ## Selectors
 
 - `.class` — class selector
