@@ -488,5 +488,5 @@ All selector types used across CSS Diner's 32 levels:
 
 ## Random Gotchas / Things I Learned the Hard Way
 
-- (add stuff here as you hit weird bugs)
+- `text-decoration-style: none;` doesn't work — `none` isn't a valid `text-decoration-style` value (only `solid`/`double`/`dotted`/`dashed`/`wavy` are). To remove a link's underline, use `text-decoration: none;` (the shorthand) or `text-decoration-line: none;` specifically.
 
