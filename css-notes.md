@@ -96,6 +96,41 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 
 **Preprocessors** (SASS, LESS, Stylus) — a language layered on top of CSS that compiles down to regular CSS, adding things like loops, conditionals, and nesting. Note: several of their historical selling points (variables, nesting) now exist natively in vanilla CSS, so the case for learning one is weaker than it used to be — only worth it for genuinely missing features.
 
+## Forms
+
+```html
+<form action="example.com/path" method="post">
+  <label for="first_name">First Name:</label>
+  <input type="text" id="first_name" name="first_name" placeholder="Bob...">
+</form>
+```
+
+- **`action`** — URL the form data gets sent to. **`method`** — `GET` (retrieving data, e.g. search) or `POST` (changing data, e.g. creating an account).
+- **`<label for="...">`** must match the input's `id` — clicking the label focuses the input, which matters for accessibility.
+- **`placeholder`** — greyed-out example text inside the input, disappears once typing starts. Not a substitute for a real `<label>`.
+- **`name`** — the key sent with the value when the form submits (see Units/general notes — no `name` means that field's data is dropped entirely on submit).
+- Form controls (input, select, etc.) also work fine **outside** a `<form>` — useful when JS just needs to grab a value without submitting anywhere.
+
+**Input types**: `text`, `email` (mobile keyboard adds @, validates format), `password` (masks characters), `number` (rejects non-numeric input), `date` (renders a date picker).
+
+**`<textarea>`**: multi-line text, unlike `<input>` it needs a closing tag (can hold default content between the tags). Takes `rows`/`cols` for initial size — users can still resize by dragging the corner.
+
+**Selection elements** — three common ways to let users pick from predefined options:
+- **`<select>`** + `<option>` — dropdown, best for longer lists. `value` on each option is what gets submitted; add `selected` to one option to default it. Group related options with `<optgroup label="...">`.
+- **Radio buttons** (`type="radio"`) — best for 5 or fewer visible options. All radios sharing the same `name` become mutually exclusive (selecting one deselects the rest). `checked` sets the default.
+- **Checkboxes** (`type="checkbox"`) — like radios, but multiple can be selected at once. A single checkbox is also the standard pattern for a true/false toggle (e.g. "subscribe to newsletter").
+
+**Buttons** — the `<button>` element takes a `type`:
+- `submit` (default if unspecified) — submits the form it's inside
+- `reset` — clears all fields back to their initial values
+- `button` — does nothing on its own, meant for JS-driven interactions
+
+Gotcha: any button inside a `<form>` defaults to `type="submit"` — so a button meant only for JS (like a toggle) needs `type="button"` explicitly, or it'll accidentally submit the form too.
+
+**Organizing forms** — `<fieldset>` groups related inputs together, `<legend>` gives that group a heading (must come right after the opening `<fieldset>` tag). Common for grouping a set of radio buttons under one question.
+
+**Styling challenges**: (1) every browser has different default form-control styles, so consistent cross-browser design requires overriding them yourself; (2) text-based inputs style easily like any element, but radio buttons/checkboxes are trickier to restyle, and some controls (like the native date picker calendar) can't be styled at all without rebuilding them in JS.
+
 ## Selectors
 
 - `.class` — class selector
