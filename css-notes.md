@@ -131,6 +131,35 @@ Gotcha: any button inside a `<form>` defaults to `type="submit"` — so a button
 
 **Styling challenges**: (1) every browser has different default form-control styles, so consistent cross-browser design requires overriding them yourself; (2) text-based inputs style easily like any element, but radio buttons/checkboxes are trickier to restyle, and some controls (like the native date picker calendar) can't be styled at all without rebuilding them in JS.
 
+**Custom checkbox technique**: `appearance: none;` strips almost all native browser styling from an input while keeping it fully interactive (keyboard support, `:focus` state stay intact) — this is what unlocks styling the checkbox yourself. From there you build the checked-state indicator using a `::before` pseudo-element, toggled visible via the `:checked` selector:
+
+```css
+input[type="checkbox"] {
+  appearance: none;
+  width: 1.2em;
+  height: 1.2em;
+  border: 0.15em solid currentColor;
+  border-radius: 0.2em;
+  display: grid;
+  place-content: center;
+}
+
+input[type="checkbox"]::before {
+  content: "";
+  width: 0.7em;
+  height: 0.7em;
+  transform: scale(0);
+  transition: transform 120ms ease-in-out;
+  background-color: currentColor;
+}
+
+input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+```
+
+Using `em` units and `currentColor` keeps the checkbox scaling with font size and inheriting the label's color automatically — handy for theming without repeating color values. Don't forget a visible `:focus` style (an `outline`) since that's a real accessibility requirement, not just a nice-to-have.
+
 ## Selectors
 
 - `.class` — class selector
