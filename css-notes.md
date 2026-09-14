@@ -160,6 +160,36 @@ input[type="checkbox"]:checked::before {
 
 Using `em` units and `currentColor` keeps the checkbox scaling with font size and inheriting the label's color automatically — handy for theming without repeating color values. Don't forget a visible `:focus` style (an `outline`) since that's a real accessibility requirement, not just a nice-to-have.
 
+**More on text fields** (from MDN):
+- `readonly` — user can't edit the value, but it's still submitted with the form.
+- `disabled` — user can't edit it, and it's **not** submitted at all. (Different behavior from `readonly` — easy to mix up.)
+- `size` — the input's physical on-screen width (in characters). `maxlength` — the max number of characters allowed to be typed in.
+- `spellcheck` — turns the browser's spellcheck squiggles on/off for that field.
+- Line breaks typed into a single-line text field get silently stripped before the data is sent — text inputs are genuinely single-line only.
+
+**Hidden input**: `<input type="hidden" name="..." value="...">` — invisible to the user, never focusable, skipped by screen readers, but still submitted with the form. Used for things like a timestamp or an ID the page needs to pass along without the user seeing or editing it. Requires `name` and `value` to be useful; shouldn't have an associated `<label>`.
+
+**Checkbox/radio submission behavior** — these work differently from text inputs:
+- A checkbox/radio's value is only sent **if it's checked**. If unchecked, nothing is sent for it — not even its `name`.
+- If checked but given no explicit `value` attribute, it's submitted as `name=on`.
+- Once a radio button in a named group is checked, the user can't get back to "none selected" just by clicking — only a form reset clears it.
+
+**`<button>` vs `<input type="submit/reset/button">`**: both produce working buttons with identical behavior, but `<button>` accepts HTML content between its tags (so you can bold text or add an icon inside it), while `<input>` buttons are void elements — their label is just plain text set via the `value` attribute. `<button>` is generally easier to style because of this.
+
+**Image button**: `<input type="image" src="..." alt="...">` renders as a clickable image that submits the form like a submit button — but instead of sending a value, it sends the X/Y pixel coordinates of where the image was clicked, as `name.x` and `name.y`. Niche, but used for building visual "click map" style interactions.
+
+**File picker**: `<input type="file">` lets users choose file(s) to upload. `accept="image/*"` restricts to a file type; add `multiple` to allow selecting more than one file at once.
+
+**Attributes common to (almost) every form control**:
+
+| Attribute | Default | What it does |
+|---|---|---|
+| `autofocus` | false | Auto-focuses this element on page load. Only one element per page should have it. |
+| `disabled` | false | Blocks interaction and excludes the field from submission entirely. |
+| `form` | — | Associates the control with a `<form>` elsewhere in the document by that form's `id`, useful when the control isn't nested inside the `<form>` tags. |
+| `name` | — | The submitted data's key. |
+| `value` | — | The control's initial value. |
+
 ## Selectors
 
 - `.class` — class selector
