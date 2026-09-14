@@ -355,6 +355,16 @@ Note: an empty-but-not-yet-touched required field also matches `:invalid` in mos
 - `content` → `padding` → `border` → `margin` (inside to outside)
 - `box-sizing: border-box;` makes padding/border count *inside* the width (usually what you want)
 
+## Opacity
+
+`opacity` takes a number `0`–`1` (or a percentage) — `0` fully transparent, `1` (default) fully opaque. Applies to the **whole element and everything inside it as one unit** — a parent and its children all fade together relative to what's behind them, even if they'd otherwise have different opacities from each other. To fade just a background (not the content on top of it), use `background` with an alpha-channel color instead, e.g. `background: rgb(0 0 0 / 40%);`.
+
+**Gotchas:**
+- `opacity: 0` makes an element invisible, but it's **still in the DOM and still interactive** — it still registers clicks/hovers and can still receive keyboard focus if tabbable. If it should also be non-interactive, pair it with `pointer-events: none;` and remove it from the tab order, rather than relying on opacity alone.
+- Setting `opacity` to anything other than `1` creates a new **stacking context** (same effect `position` has, covered above) — affects how `z-index` behaves with siblings.
+- **Accessibility**: opacity is a purely visual effect — screen readers don't treat a faded element as hidden. Use the `hidden` attribute, or `visibility`/`display`, to actually hide something from assistive tech; reserve `opacity` for visual fading effects only. Also worth checking text contrast ratio when opacity is applied to text — faded text can fail WCAG contrast requirements even if it looks fine to someone with typical vision.
+- `prefers-reduced-transparency` media query lets you respect a user's OS-level preference for less transparency, similar to `prefers-color-scheme`.
+
 ## Specificity (why my CSS isn't applying)
 
 Higher specificity wins, regardless of order in the file:
