@@ -132,6 +132,12 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 
 Gotcha: any button inside a `<form>` defaults to `type="submit"` — so a button meant only for JS (like a toggle) needs `type="button"` explicitly, or it'll accidentally submit the form too.
 
+**Associating a submit button with a form**: nesting the button inside the `<form>` tags does this automatically — no extra attribute needed. If the button needs to live outside the `<form>` element in the markup (for layout/styling reasons), give the `<form>` an `id` and point the button at it with the `form` attribute instead:
+```html
+<form id="signupForm" action="/submit" method="post"></form>
+<button type="submit" form="signupForm">Submit</button>
+```
+
 **Organizing forms** — `<fieldset>` groups related inputs together, `<legend>` gives that group a heading (must come right after the opening `<fieldset>` tag). Common for grouping a set of radio buttons under one question.
 
 **Styling challenges**: (1) every browser has different default form-control styles, so consistent cross-browser design requires overriding them yourself; (2) text-based inputs style easily like any element, but radio buttons/checkboxes are trickier to restyle, and some controls (like the native date picker calendar) can't be styled at all without rebuilding them in JS.
