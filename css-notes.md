@@ -75,6 +75,8 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 
 **Flexbox vs Position**: flexbox arranges elements *in relation to each other* (rows, columns, spacing) and stays responsive as content/screen size changes. `position` places one specific element precisely, possibly overlapping others, but requires manual pixel values and doesn't adapt automatically. Real layouts use both — flexbox for overall structure, `position: absolute` for the occasional badge/overlay inside a flex container.
 
+**Gotcha — `flex-direction` vs `flex-wrap`**: `flex-direction` only accepts `row`/`row-reverse`/`column`/`column-reverse` — `wrap` is not a valid value for it. Wrapping is a *separate* property, `flex-wrap: wrap;` (default is `nowrap`, which keeps all items on one line even if they overflow). Writing `flex-direction: wrap;` is silently ignored, leaving items squeezed into a single row/column that can overflow its container.
+
 ## Grid
 
 ```css
