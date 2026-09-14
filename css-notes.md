@@ -299,6 +299,15 @@ input[type="email"]:invalid {
 ```
 Note: an empty-but-not-yet-touched required field also matches `:invalid` in most browsers, so this is often paired with `:focus`/`:not(:placeholder-shown)` to avoid showing an error before the user has even started typing.
 
+### Form Validation (built-in constraints)
+
+- **`required`** — field must have a value before the form submits. Always pair with a visible indicator (e.g. an asterisk on the label) so users know which fields are mandatory before they hit submit, not after.
+- **`minlength` / `maxlength`** — min/max character count for text-based fields. Gotcha: `minlength` does **not** imply `required` — an empty field still passes `minlength` validation and submits fine, since constraint validation for length only kicks in once the user has actually typed something.
+- **`min` / `max`** — lower/upper bound for number-based controls (`number`, `range`, and the date/time family) — not usable on plain text fields.
+- **`pattern`** — takes a regex the value must match, usable only on `<input>` elements (not `<textarea>`). Some types have pattern-like validation built in already (`email`, `url`). Writing your own regex from scratch is usually more trouble than it's worth — better to search for an established, tested pattern for the format you need (zip code, phone number, etc.) than hand-roll one. Pair with `placeholder` to show an example of the expected format, since the browser's default error message ("Please match the requested format") doesn't explain what's actually wrong.
+- **`:user-valid` / `:user-invalid`** — like `:valid`/`:invalid`, but only activate **after the user has actually interacted with the field** (typed something, then blurred). This avoids the untouched-required-field problem `:invalid` has, without needing to layer on `:focus`/`:not(:placeholder-shown)` workarounds — generally the better default choice for validation styling.
+- Built-in HTML validation is genuinely useful but has real limits — it can't check things like "does this password match the confirm-password field" or "is this username already taken." Anything beyond single-field format/range checks needs custom JavaScript validation, and server-side validation is still required regardless, since client-side checks can always be bypassed.
+
 ## Selectors
 
 - `.class` — class selector
