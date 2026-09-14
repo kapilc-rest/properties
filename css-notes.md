@@ -107,7 +107,7 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 
 - **`action`** — URL the form data gets sent to. **`method`** — `GET` (retrieving data, e.g. search) or `POST` (changing data, e.g. creating an account).
 - **`<label for="...">`** must match the input's `id` — clicking the label focuses the input, which matters for accessibility.
-- **`placeholder`** — greyed-out example text inside the input, disappears once typing starts. Not a substitute for a real `<label>`.
+- **`placeholder` vs `value`** — easy to mix up since both put text inside the field: `value` is **real, pre-filled data** — if the form submits untouched, `value` is exactly what gets sent, and the user can edit/delete it like anything they typed themselves. `placeholder` is just a **greyed-out hint** that vanishes the instant typing starts and is **never submitted** — an empty field with only a placeholder showing submits as an empty string. Also, `placeholder` isn't a substitute for a real `<label>`, since it disappears on focus and isn't reliably read by all screen readers.
 - **`name`** — the key sent with the value when the form submits (see Units/general notes — no `name` means that field's data is dropped entirely on submit).
 - Form controls (input, select, etc.) also work fine **outside** a `<form>` — useful when JS just needs to grab a value without submitting anywhere.
 
