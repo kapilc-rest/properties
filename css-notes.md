@@ -213,6 +213,8 @@ legend { position: absolute; bottom: 0; right: 0; }
 
 **The `appearance` property**: strips OS/system-level styling from a form control so you can build it up with CSS yourself. `appearance: none;` is by far the most-used value. On most text-like inputs the effect is subtle (mainly removes the stylized border), but on checkboxes/radios it's what makes real custom styling possible at all (see the checkbox technique below).
 
+**`all: unset;`**: a blunter, more complete reset than `appearance: none;` — wipes *every* CSS property on the element back to inherited/initial values, not just the OS-level form chrome. Good for stripping a `<button>` down to bare unstyled text (e.g. making it look like a plain link). Two things it also removes that are easy to forget to restore: the pointer cursor (`cursor: pointer;` needs re-adding) and block-ish sizing behavior (`display` resets to `inline`, so `display: inline-block;`/`flex` may need re-adding too). Use `unset` rather than `all: initial;` when you want the element to still inherit things like `color`/`font` from its parent context — `initial` ignores inheritance entirely and resets to spec defaults regardless.
+
 **`accent-color`**: a lighter-touch alternative to full `appearance: none;` restyling — changes just the primary tint color of checkboxes, radio buttons, and range sliders while keeping their native OS appearance (and therefore native forced-colors/high-contrast support) intact. Good enough when you only need brand-color tinting, not a fully custom look:
 ```css
 input { accent-color: rebeccapurple; }
