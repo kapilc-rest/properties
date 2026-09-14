@@ -77,6 +77,8 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 
 **Gotcha — `flex-direction` vs `flex-wrap`**: `flex-direction` only accepts `row`/`row-reverse`/`column`/`column-reverse` — `wrap` is not a valid value for it. Wrapping is a *separate* property, `flex-wrap: wrap;` (default is `nowrap`, which keeps all items on one line even if they overflow). Writing `flex-direction: wrap;` is silently ignored, leaving items squeezed into a single row/column that can overflow its container.
 
+**Gotcha — flex items won't shrink below their content by default**: flex items have an implicit `min-height: auto` (or `min-width: auto` in a row layout) — meaning their minimum size defaults to whatever their content naturally needs, not `0`. So `max-height`/`flex-shrink` on a flex item can cap its *growth*, but won't actually force it smaller than its content until that default minimum is overridden with `min-height: 0;` (or `min-width: 0;` for row layouts). Often paired with `overflow: auto;` so any content that still doesn't fit scrolls instead of forcing the container to grow anyway.
+
 ## Grid
 
 ```css
