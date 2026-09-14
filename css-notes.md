@@ -105,8 +105,11 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 </form>
 ```
 
-- **`action`** — URL the form data gets sent to. **`method`** — `GET` (retrieving data, e.g. search) or `POST` (changing data, e.g. creating an account).
-- **`<label for="...">`** must match the input's `id` — clicking the label focuses the input, which matters for accessibility.
+- **`action`** — URL the form data gets sent to. **`method`** — `GET` (retrieving data, e.g. search) or `POST` (changing data, e.g. creating an account). With `GET`, submitted data literally appends to the URL as a query string — each field's `name=value` pair joined by `&`, e.g. `page.html?name=Thor&email=thor%40asgard.com` — which is exactly why `GET` is wrong for anything sensitive (passwords, personal data): it ends up visible in the URL, browser history, and server logs. `POST` sends the data in the request body instead, out of the URL.
+- **`<label for="...">`** must match the input's `id` — clicking the label focuses the input, which matters for accessibility. Alternative pattern: wrap the `<label>` directly around its `<input>` instead of using `for`/`id` — this works too (and is common for checkboxes), though `for`/`id` is still considered the more explicit best practice.
+```html
+<label><input type="checkbox" name="subscribe"> Subscribe</label>
+```
 - **`placeholder` vs `value`** — easy to mix up since both put text inside the field: `value` is **real, pre-filled data** — if the form submits untouched, `value` is exactly what gets sent, and the user can edit/delete it like anything they typed themselves. `placeholder` is just a **greyed-out hint** that vanishes the instant typing starts and is **never submitted** — an empty field with only a placeholder showing submits as an empty string. Also, `placeholder` isn't a substitute for a real `<label>`, since it disappears on focus and isn't reliably read by all screen readers.
 - **`name`** — the key sent with the value when the form submits (see Units/general notes — no `name` means that field's data is dropped entirely on submit).
 - Form controls (input, select, etc.) also work fine **outside** a `<form>` — useful when JS just needs to grab a value without submitting anywhere.
@@ -152,7 +155,7 @@ Gotcha: any button inside a `<form>` defaults to `type="submit"` — so a button
 <button type="submit" form="signupForm">Submit</button>
 ```
 
-**Organizing forms** — `<fieldset>` groups related inputs together, `<legend>` gives that group a heading (must come right after the opening `<fieldset>` tag). Common for grouping a set of radio buttons under one question.
+**Organizing forms** — `<fieldset>` groups related inputs together, `<legend>` gives that group a heading (must come right after the opening `<fieldset>` tag). Common for grouping a set of radio buttons under one question. Historically `<fieldset>` didn't support `display: flex` reliably across browsers, so some older guides fall back to `float` for laying out its contents — worth a quick check if a flex layout inside a fieldset misbehaves, though modern browser support has largely caught up.
 
 **Styling challenges**: (1) every browser has different default form-control styles, so consistent cross-browser design requires overriding them yourself; (2) text-based inputs style easily like any element, but radio buttons/checkboxes are trickier to restyle, and some controls (like the native date picker calendar) can't be styled at all without rebuilding them in JS.
 
@@ -287,6 +290,14 @@ Using `em` units and `currentColor` keeps the checkbox scaling with font size an
 - **`color`** — opens the OS's native color picker; the submitted value is always a lowercase 6-digit hex code (e.g. `#ff0000`).
 
 **Client-side validation caveat**: types like `email`, `url`, and `number` validate in the browser before submission — genuinely helpful for user experience (catches typos immediately), but it is **not a security measure**. Client-side checks can be bypassed trivially (disabling JS, editing dev tools, sending a raw request), so the server must always re-validate any submitted data independently.
+
+**Styling based on validation state**: the `:valid`/`:invalid` pseudo-classes let you style an input differently depending on whether its current value passes the browser's built-in validation (matches `type="email"`'s format, satisfies `required`, etc.) — useful for the classic red-border-on-bad-input pattern:
+```css
+input[type="email"]:invalid {
+  border: 1px solid red;
+}
+```
+Note: an empty-but-not-yet-touched required field also matches `:invalid` in most browsers, so this is often paired with `:focus`/`:not(:placeholder-shown)` to avoid showing an error before the user has even started typing.
 
 ## Selectors
 
