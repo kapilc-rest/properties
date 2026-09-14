@@ -521,4 +521,5 @@ All selector types used across CSS Diner's 32 levels:
 ## Random Gotchas / Things I Learned the Hard Way
 
 - `text-decoration-style: none;` doesn't work — `none` isn't a valid `text-decoration-style` value (only `solid`/`double`/`dotted`/`dashed`/`wavy` are). To remove a link's underline, use `text-decoration: none;` (the shorthand) or `text-decoration-line: none;` specifically. Note `text-decoration: none;` only removes the underline — the default link color (and separate `:visited` purple) needs its own override, e.g. `color: inherit;` to blend into surrounding text, or a specific `color` value.
+- An input turning black/dark-ringed on focus with no obvious cause is usually the **browser's default focus `outline`**, not the `border` — outline is a separate property drawn outside the border, and its default color/style varies by browser/OS rather than always being blue. Style it explicitly instead of leaving it to guesswork: `input:focus { outline: 2px solid <color>; outline-offset: 2px; }`.
 
