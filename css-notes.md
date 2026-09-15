@@ -81,6 +81,14 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 
 ## Grid
 
+**Key terms** (the vocabulary Grid documentation assumes you know):
+- **Grid container** — the element `display: grid` is applied to.
+- **Grid item** — a direct child of the grid container.
+- **Grid line** — the dividing lines forming the grid's structure, either vertical (column lines) or horizontal (row lines).
+- **Grid track** — the space between two adjacent grid lines — this is what you're sizing with `grid-template-columns`/`rows` (i.e. a column or row of the grid).
+- **Grid cell** — the space between one adjacent pair of row lines and one adjacent pair of column lines — a single "unit" of the grid, like a spreadsheet cell.
+- **Grid area** — any rectangular space bounded by four grid lines, which can span multiple cells (more than one row and/or column combined).
+
 ```css
 .container {
   display: grid;
