@@ -89,6 +89,31 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 }
 ```
 
+- `display: grid;` (or `inline-grid`) turns an element into a grid **container**. Only its **direct children** automatically become grid **items** — a grandchild nested deeper (e.g. a `<p>` inside a grid item `<div>`) is not itself a grid item. Grid items can also be grid containers themselves, so grids can nest inside grids.
+- Without borders/outlines, a grid's lines and tracks aren't visually obvious even once `display: grid` is applied — they're still there, just invisible until content or borders make the layout apparent. Browser dev tools (Chrome's Layout panel, e.g.) can overlay the grid lines visually for debugging.
+
+**Columns and rows**: `grid-template-columns`/`grid-template-rows` define the **tracks** (the space between grid lines) — e.g. `grid-template-columns: 50px 50px 50px;` creates three column tracks. Columns and rows don't need matching values — `grid-template-columns: 250px 50px 50px;` makes the first column five times wider than the others.
+
+**Shorthand**: `grid-template` sets both at once — rows before the slash, columns after:
+```css
+.container {
+  grid-template: 50px 50px / 50px 50px 50px; /* rows / columns */
+}
+```
+
+**Explicit vs implicit grid**: `grid-template-columns`/`grid-template-rows` define the **explicit** grid. If more items exist than the explicit tracks can hold, CSS Grid automatically creates extra **implicit** tracks to fit them — by default, added as extra rows further down. Implicit tracks don't inherit sizing from the explicit `grid-template-*` values; size them separately with `grid-auto-rows`/`grid-auto-columns`:
+```css
+.container {
+  display: grid;
+  grid-template-columns: 50px 50px;
+  grid-template-rows: 50px 50px;
+  grid-auto-rows: 50px; /* size for any implicitly-created rows */
+}
+```
+To have overflow items flow horizontally into new columns instead of new rows, use `grid-auto-flow: column;` (paired with `grid-auto-columns` to size those).
+
+**Gap**: the gutter/alley between tracks. `row-gap` and `column-gap` control each direction separately; `gap` is the shorthand for both.
+
 ## Browser Compatibility
 
 - Different browsers use different rendering engines — Chrome/Chromium-based browsers (Edge, Brave, etc.) use **Blink**, Safari uses **WebKit**, Firefox uses **Gecko**. A feature can work in one and not another.
