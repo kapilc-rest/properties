@@ -102,6 +102,16 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 
 **Columns and rows**: `grid-template-columns`/`grid-template-rows` define the **tracks** (the space between grid lines) — e.g. `grid-template-columns: 50px 50px 50px;` creates three column tracks. Columns and rows don't need matching values — `grid-template-columns: 250px 50px 50px;` makes the first column five times wider than the others.
 
+**`repeat()`**: shorthand for writing the same track size over and over. `grid-template-columns: repeat(3, 1fr);` is identical to `1fr 1fr 1fr` — just shorter, and easier to change the count on later.
+```css
+.container {
+  grid-template-columns: repeat(3, 1fr);
+}
+```
+- Takes two arguments: how many tracks, then the size for each. The size can be a fixed unit (`repeat(4, 100px)`), a flexible unit (`repeat(3, 1fr)`), or even multiple sizes that repeat as a group: `repeat(2, 100px 50px)` produces `100px 50px 100px 50px` (two pairs).
+- Can mix with explicit tracks: `grid-template-columns: 200px repeat(3, 1fr);` — a fixed sidebar column followed by three equal flexible columns.
+- **`auto-fill` / `auto-fit`**: instead of a fixed count, let the browser figure out how many tracks fit — useful for responsive grids without a media query. `grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));` fills as many 150px+ columns as fit the container width, growing them to fill leftover space. `auto-fill` keeps empty leftover tracks (as invisible gaps) if there isn't enough content to fill a row; `auto-fit` collapses those empty tracks to 0 width instead, letting the actual items stretch to fill the row.
+
 **Shorthand**: `grid-template` sets both at once — rows before the slash, columns after:
 ```css
 .container {
