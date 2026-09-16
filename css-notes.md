@@ -137,6 +137,8 @@ To have overflow items flow horizontally into new columns instead of new rows, u
 ```
 This spans the item across the tracks *between* those lines — `grid-column-start: 1; grid-column-end: 3;` covers columns 1 and 2 (stops before line 3), not three columns.
 
+**Default value**: all four (`grid-column-start`/`-end`, `grid-row-start`/`-end`) default to `auto` — the browser places the item itself, one track at a time, following `grid-auto-flow`, unless a paired property gives it more to go on. E.g. leaving `grid-row-start: auto;` but setting `grid-row-end: span 2;` means "start wherever auto-placement puts you, but span 2 rows from there."
+
 **Shorthand**: `grid-column` and `grid-row` combine the start/end pair with a slash:
 ```css
 .item {
