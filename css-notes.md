@@ -122,6 +122,8 @@ To have overflow items flow horizontally into new columns instead of new rows, u
 
 **Gap**: the gutter/alley between tracks. `row-gap` and `column-gap` control each direction separately; `gap` is the shorthand for both.
 
+**Debugging grids in Chrome DevTools**: any element with `display: grid`/`inline-grid` shows a `grid` badge next to it in the Elements panel — click it to toggle a visual overlay of the grid's lines and tracks directly on the page (subgrids get their own badge too). The **Layout** pane's **Grid** section adds more viewing options: show line numbers or line names, show track sizes (displays `[authored size] - [computed size]` per line, e.g. `1fr - 96.66px`, useful for seeing what an `fr` unit actually resolved to), show area names, and extend grid lines to the viewport edge. Multiple grids on a page can be overlaid at once, each in its own color. There's also a **Grid Editor** button next to `display: grid` in the Styles pane for setting `align-*`/`justify-*` properties by clicking instead of writing CSS.
+
 ## Browser Compatibility
 
 - Different browsers use different rendering engines — Chrome/Chromium-based browsers (Edge, Brave, etc.) use **Blink**, Safari uses **WebKit**, Firefox uses **Gecko**. A feature can work in one and not another.
