@@ -118,7 +118,7 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
   grid-auto-rows: 50px; /* size for any implicitly-created rows */
 }
 ```
-To have overflow items flow horizontally into new columns instead of new rows, use `grid-auto-flow: column;` (paired with `grid-auto-columns` to size those).
+To have overflow items flow horizontally into new columns instead of new rows, use `grid-auto-flow: column;` (paired with `grid-auto-columns` to size those). In other words, "only rows grow by default" really means "only whichever axis `grid-auto-flow` points to grows" — the explicitly-defined count on the *other* axis stays fixed either way; `row` is just the default value.
 
 **Gap**: the gutter/alley between tracks. `row-gap` and `column-gap` control each direction separately; `gap` is the shorthand for both.
 
