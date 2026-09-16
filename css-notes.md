@@ -120,6 +120,8 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 ```
 To have overflow items flow horizontally into new columns instead of new rows, use `grid-auto-flow: column;` (paired with `grid-auto-columns` to size those). In other words, "only rows grow by default" really means "only whichever axis `grid-auto-flow` points to grows" — the explicitly-defined count on the *other* axis stays fixed either way; `row` is just the default value.
 
+**`grid-auto-flow` full value list**: `row` (default, fills rows first) / `column` (fills columns first) / `row dense` / `column dense` — the `dense` variants backfill earlier gaps in the grid if a later, smaller item can fit into an empty cell left behind by an earlier, larger item. Useful for masonry-style layouts with items of varying sizes.
+
 **Gap**: the gutter/alley between tracks. `row-gap` and `column-gap` control each direction separately; `gap` is the shorthand for both.
 
 **Debugging grids in Chrome DevTools**: any element with `display: grid`/`inline-grid` shows a `grid` badge next to it in the Elements panel — click it to toggle a visual overlay of the grid's lines and tracks directly on the page (subgrids get their own badge too). The **Layout** pane's **Grid** section adds more viewing options: show line numbers or line names, show track sizes (displays `[authored size] - [computed size]` per line, e.g. `1fr - 96.66px`, useful for seeing what an `fr` unit actually resolved to), show area names, and extend grid lines to the viewport edge. Multiple grids on a page can be overlaid at once, each in its own color. There's also a **Grid Editor** button next to `display: grid` in the Styles pane for setting `align-*`/`justify-*` properties by clicking instead of writing CSS.
