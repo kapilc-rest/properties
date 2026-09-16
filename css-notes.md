@@ -126,6 +126,48 @@ To have overflow items flow horizontally into new columns instead of new rows, u
 
 **Debugging grids in Chrome DevTools**: any element with `display: grid`/`inline-grid` shows a `grid` badge next to it in the Elements panel — click it to toggle a visual overlay of the grid's lines and tracks directly on the page (subgrids get their own badge too). The **Layout** pane's **Grid** section adds more viewing options: show line numbers or line names, show track sizes (displays `[authored size] - [computed size]` per line, e.g. `1fr - 96.66px`, useful for seeing what an `fr` unit actually resolved to), show area names, and extend grid lines to the viewport edge. Multiple grids on a page can be overlaid at once, each in its own color. There's also a **Grid Editor** button next to `display: grid` in the Styles pane for setting `align-*`/`justify-*` properties by clicking instead of writing CSS.
 
+**Positioning items with lines**: every track has a numbered start and end line (lines run 1 to n+1 for n tracks, counting left-to-right / top-to-bottom). Position an individual grid item by telling it which lines to start/end on:
+```css
+.item {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 1;
+  grid-row-end: 2;
+}
+```
+This spans the item across the tracks *between* those lines — `grid-column-start: 1; grid-column-end: 3;` covers columns 1 and 2 (stops before line 3), not three columns.
+
+**Shorthand**: `grid-column` and `grid-row` combine the start/end pair with a slash:
+```css
+.item {
+  grid-column: 1 / 3;
+  grid-row: 1 / 2;
+}
+```
+
+**`grid-area` (line-based shorthand)**: combines all four — row-start / column-start / row-end / column-end, in that specific order (note: row before column, opposite of how `grid-column`/`grid-row` are usually written separately):
+```css
+.item {
+  grid-area: 1 / 1 / 3 / 6; /* row-start / column-start / row-end / column-end */
+}
+```
+
+**`grid-area` (named areas)**: `grid-area` can *also* just assign a name to an item, used together with `grid-template-areas` on the container to lay out the whole grid visually in the CSS itself:
+```css
+.item { grid-area: header; }
+```
+```css
+.container {
+  grid-template-areas:
+    "header header header"
+    "sidebar main main"
+    "footer footer footer";
+}
+```
+Each quoted string is one row; repeating a name across cells makes the item span that many cells. A `.` (period) marks an empty/unused cell instead of assigning a name. This is a genuinely different mental model from the line-number approach — it reads like an ASCII diagram of the layout instead of counting grid lines.
+
+**Dev tools tip**: Chrome's grid overlay also shows *negative* line numbers, counting backwards from the last line (-1) to the first. Useful for positioning relative to the end of the grid without knowing exactly how many explicit/implicit tracks exist — e.g. `grid-column-end: -1;` always means "to the very last column line," regardless of how many columns the grid ends up with.
+
 ## Browser Compatibility
 
 - Different browsers use different rendering engines — Chrome/Chromium-based browsers (Edge, Brave, etc.) use **Blink**, Safari uses **WebKit**, Firefox uses **Gecko**. A feature can work in one and not another.
