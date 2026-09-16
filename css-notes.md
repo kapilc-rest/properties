@@ -168,6 +168,8 @@ This spans the item across the tracks *between* those lines — `grid-column-sta
 ```
 Each quoted string is one row; repeating a name across cells makes the item span that many cells. A `.` (period) marks an empty/unused cell instead of assigning a name. This is a genuinely different mental model from the line-number approach — it reads like an ASCII diagram of the layout instead of counting grid lines.
 
+**Personal note**: prefer `grid-column`/`grid-row` over `grid-area`'s line-number shorthand — the axis is explicit in the property name, so there's no need to remember that `grid-area`'s row-before-column order is reversed from how you'd normally write them separately. (This doesn't apply to `grid-area`'s *named-area* form below, paired with `grid-template-areas` — that's a genuinely different, often more readable tool.)
+
 **Dev tools tip**: Chrome's grid overlay also shows *negative* line numbers, counting backwards from the last line (-1) to the first. Useful for positioning relative to the end of the grid without knowing exactly how many explicit/implicit tracks exist — e.g. `grid-column-end: -1;` always means "to the very last column line," regardless of how many columns the grid ends up with.
 
 ## Browser Compatibility
