@@ -133,6 +133,7 @@ Static (`px`) and dynamic (`fr`) units can be freely mixed in the same declarati
 Each column here grows and shrinks with the container, but never below 150px or above 200px.
 
 - **`auto-fill` / `auto-fit`**: instead of a fixed count, let the browser figure out how many tracks fit — useful for responsive grids without a media query. `grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));` fills as many 150px+ columns as fit the container width, growing them to fill leftover space. `auto-fill` keeps empty leftover tracks (as invisible gaps) if there isn't enough content to fill a row; `auto-fit` collapses those empty tracks to 0 width instead, letting the actual items stretch to fill the row.
+- **Gotchas (from the spec):** an auto-repeat (`auto-fill`/`auto-fit`) needs a *definite* size to count against — either the grid container has a definite width/max-width (so it fills to that), or the tracks themselves have a definite min-size to satisfy (e.g. a container with no fixed width but a `min-width`). With neither, the track list just repeats once. Also: only **one** `repeat(auto-fill, …)`/`repeat(auto-fit, …)` is allowed per track list (can't have two auto-repeats — though it can coexist with a fixed-count `repeat()` elsewhere in the same list), and the repeated tracks must be a fixed/definite size — you can't auto-repeat something sized `1fr` or `auto`, only lengths, percentages, or `minmax()` with a fixed bound.
 
 **Shorthand**: `grid-template` sets both at once — rows before the slash, columns after:
 ```css
