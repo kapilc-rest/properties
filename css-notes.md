@@ -13,6 +13,11 @@
 - `em` — relative to parent's font size
 - `ch` — relative to the width of the `0` character in the current font. Useful for capping text line-length in a readable range (see Functions section below).
 
+## Sizing Keywords
+
+- `min-content` — shrinks an element to the smallest size possible without causing avoidable overflow. For text, this wraps at every opportunity (every space), so the element ends up only as wide as its single longest word. Works as a value for `width`/`height` (and `inline-size`/`block-size`), and inside grid tracks: `grid-template-columns: 200px 1fr min-content;`
+- Related keywords to look up when needed: `max-content` (opposite — sizes to fit content with *no* wrapping), `fit-content` (a capped version — grows like `max-content` up to an available-space limit, then wraps like `min-content`)
+
 ## Media Queries
 
 ```css
