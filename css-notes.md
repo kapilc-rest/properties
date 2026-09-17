@@ -102,6 +102,14 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 
 **Columns and rows**: `grid-template-columns`/`grid-template-rows` define the **tracks** (the space between grid lines) — e.g. `grid-template-columns: 50px 50px 50px;` creates three column tracks. Columns and rows don't need matching values — `grid-template-columns: 250px 50px 50px;` makes the first column five times wider than the others.
 
+**Fractional units (`fr`)**: distributes whatever *remaining space* is left in the grid, proportionally. A 400px-wide grid with four `1fr` columns gives each one 100px. Unlike `%`, `fr` divides up leftover space *after* any fixed-size tracks are accounted for, not the total.
+```css
+.container {
+  grid-template-columns: repeat(2, 2fr) repeat(3, 1fr); /* first 2 cols get 2x the space of the last 3 */
+}
+```
+Static (`px`) and dynamic (`fr`) units can be freely mixed in the same declaration — fixed tracks are sized first, then `fr` divides up whatever's left. With no other constraint, a grid item shrinks down to its `min-content` size (the smallest it can be without its own content overflowing) as a hard floor — worth knowing about, but better to set an explicit floor yourself with `minmax()` or `clamp()` rather than relying on it.
+
 **`repeat()`**: shorthand for writing the same track size over and over. `grid-template-columns: repeat(3, 1fr);` is identical to `1fr 1fr 1fr` — just shorter, and easier to change the count on later.
 ```css
 .container {
@@ -110,6 +118,15 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 ```
 - Takes two arguments: how many tracks, then the size for each. The size can be a fixed unit (`repeat(4, 100px)`), a flexible unit (`repeat(3, 1fr)`), or even multiple sizes that repeat as a group: `repeat(2, 100px 50px)` produces `100px 50px 100px 50px` (two pairs).
 - Can mix with explicit tracks: `grid-template-columns: 200px repeat(3, 1fr);` — a fixed sidebar column followed by three equal flexible columns.
+
+**`minmax(min, max)`**: a Grid-only function (works only in `grid-template-columns`/`-rows`, `grid-auto-columns`/`-rows`) that sets a track's floor and ceiling in one go — unlike `min()`/`max()` (which just pick the smaller/larger of a list and are pointless with two static values), `minmax()`'s two arguments mean two *different* things: don't shrink below the first, don't grow past the second.
+```css
+.container {
+  grid-template-columns: repeat(5, minmax(150px, 200px));
+}
+```
+Each column here grows and shrinks with the container, but never below 150px or above 200px.
+
 - **`auto-fill` / `auto-fit`**: instead of a fixed count, let the browser figure out how many tracks fit — useful for responsive grids without a media query. `grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));` fills as many 150px+ columns as fit the container width, growing them to fill leftover space. `auto-fill` keeps empty leftover tracks (as invisible gaps) if there isn't enough content to fill a row; `auto-fit` collapses those empty tracks to 0 width instead, letting the actual items stretch to fill the row.
 
 **Shorthand**: `grid-template` sets both at once — rows before the slash, columns after:
@@ -473,7 +490,7 @@ Note: an empty-but-not-yet-touched required field also matches `:invalid` in mos
 - `translate()` / `rotate()` / `scale()` — move, rotate, or resize an element via the `transform` property, without affecting layout flow (great for animations/hover effects since they don't trigger reflow the way changing `top`/`left`/`width` does)
 - `attr()` — pulls an HTML attribute's value into CSS, most commonly with `content` in `::before`/`::after` (e.g. showing a link's `href` next to it)
 - `url()` — references an external resource (image, font, SVG) — `background-image: url("photo.jpg");`
-- `repeat()` / `minmax()` — used inside `grid-template-columns` to avoid repeating yourself and to set flexible column/row sizes with a floor and ceiling
+- `repeat()` / `minmax()` — Grid-only, see the **Grid** section above for the full writeup (track counts, `fr` units, `auto-fit`/`auto-fill`)
 
 ## Box Model
 
