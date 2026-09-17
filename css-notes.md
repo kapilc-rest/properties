@@ -225,6 +225,29 @@ By default, a grid item that's *also* a grid container starts a totally independ
 ```
 Useful for things like card layouts where each card is its own grid item, but you want a heading/body/footer *inside every card* to line up across cards — without subgrid, each card's internal grid has no relationship to the others'.
 
+## Flexbox vs Grid — which to use
+
+Not a strict rule, more a starting instinct: **content-first vs layout-first**.
+
+- **Content-first → Flexbox.** You know what the pieces are, but not exactly how big the container will end up — Flexbox's grow/shrink/wrap rules figure out the layout *from* the content. Good fit for a nav bar, a row of tags, a button group — one-dimensional sets of items where the exact end layout is a consequence of the content, not planned in advance.
+- **Layout-first → Grid.** You already know the shape you want — a page skeleton, a dashboard, a card grid — and you're placing content into it. Grid tracks are fixed in advance (explicit or implicit); content fills the spaces you defined, not the other way around.
+
+Neither is exclusive to 1D vs 2D layouts in practice — Grid *can* do a simple one-dimensional row just fine, it's just more setup (explicit tracks) than Flexbox needs for the same result. The deciding factor is really whether you're designing top-down (layout first) or bottom-up (content first), not the dimensionality alone.
+
+**Combining them**: a common, genuinely useful pattern is Grid for the outer page/component skeleton, with individual grid items set to `display: flex` internally — Grid handles precise 2D placement of the big pieces, Flexbox handles the more fluid arrangement of content *within* each piece.
+```css
+.page {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+}
+.card {
+  /* a grid item that's also a flex container */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+```
+
 ## Browser Compatibility
 
 - Different browsers use different rendering engines — Chrome/Chromium-based browsers (Edge, Brave, etc.) use **Blink**, Safari uses **WebKit**, Firefox uses **Gecko**. A feature can work in one and not another.
