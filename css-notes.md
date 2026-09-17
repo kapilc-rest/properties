@@ -199,6 +199,32 @@ Each quoted string is one row; repeating a name across cells makes the item span
 
 **Dev tools tip**: Chrome's grid overlay also shows *negative* line numbers, counting backwards from the last line (-1) to the first. Useful for positioning relative to the end of the grid without knowing exactly how many explicit/implicit tracks exist — e.g. `grid-column-end: -1;` always means "to the very last column line," regardless of how many columns the grid ends up with.
 
+**`span` keyword**: an alternative to a specific end-line number — instead of saying *which line* to end on, say *how many tracks* to cover. `grid-row-start: 2; grid-row-end: span 2;` starts at line 2 and covers 2 rows, whatever line that ends up landing on — useful when you don't want to do the "start line + track count" math yourself, or when the grid's track count might change later. Works in the shorthand too: `grid-column: 3 / span 2;`.
+
+**Named lines**: instead of relying on line numbers, `grid-template-columns`/`-rows` can name lines in square brackets alongside the sizes — `grid-template-columns: [sidebar-start] 200px [sidebar-end main-start] 1fr [main-end];`. Items can then position themselves by name instead of counting lines: `grid-column: sidebar-start / sidebar-end;`. A line can hold more than one name (as in the example above, `sidebar-end` and `main-start` are the same line). Mostly useful for larger/reusable grids where "line 4" is meaningless at a glance but `sidebar-end` documents itself.
+
+**Alignment**: same property names and values as Flexbox (`start`/`end`/`center`/`stretch`, plus `space-between`/`space-around`/`space-evenly`), but Grid draws a distinction Flexbox doesn't need to, because Grid has two separate things that can be misaligned — items *within* their cells, and the *whole grid* within its container (which only matters if the grid's total size ends up smaller than the container, e.g. all tracks sized in fixed `px`).
+- **`justify-items`/`align-items`** (on the container): aligns every item *within its own cell* — row axis / column axis respectively. Default is `stretch` (fills the cell).
+- **`justify-self`/`align-self`** (on an individual item): same idea, but overrides the container's `justify-items`/`align-items` for just that one item.
+- **`justify-content`/`align-content`** (on the container): aligns the *entire grid* within the container, when the grid's total size is smaller than the container — row axis / column axis respectively. This is the one people expect `justify-items`/`align-items` to do and get confused when it doesn't.
+- **`place-items`/`place-content`/`place-self`**: shorthands combining the align/justify pair (`place-items: center;` centers everything in one line — align first, justify second if two values given).
+
+## Subgrid
+
+By default, a grid item that's *also* a grid container starts a totally independent grid — its own tracks don't line up with its parent's. `grid-template-columns: subgrid;` (or `-rows`) tells a nested grid to inherit its parent's track sizing instead of defining its own, so nested content can align to the outer grid's lines:
+```css
+.parent {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+}
+.child {
+  grid-column: 2 / 7;
+  display: grid;
+  grid-template-columns: subgrid; /* reuses parent's column tracks 2–7 */
+}
+```
+Useful for things like card layouts where each card is its own grid item, but you want a heading/body/footer *inside every card* to line up across cards — without subgrid, each card's internal grid has no relationship to the others'.
+
 ## Browser Compatibility
 
 - Different browsers use different rendering engines — Chrome/Chromium-based browsers (Edge, Brave, etc.) use **Blink**, Safari uses **WebKit**, Firefox uses **Gecko**. A feature can work in one and not another.
