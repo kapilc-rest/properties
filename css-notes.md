@@ -115,6 +115,24 @@ Note: `prefers-color-scheme` only supports `light`/`dark` (no custom theme names
 ```
 Static (`px`) and dynamic (`fr`) units can be freely mixed in the same declaration — fixed tracks are sized first, then `fr` divides up whatever's left. With no other constraint, a grid item shrinks down to its `min-content` size (the smallest it can be without its own content overflowing) as a hard floor — worth knowing about, but better to set an explicit floor yourself with `minmax()` or `clamp()` rather than relying on it.
 
+**`fr` rows on a container with no definite height — a trap**: `fr` normally divides *available space*, but if the container's height is `auto` (no `height`/`max-height` set), there's no available space to divide. In that case the spec falls back to: for each `fr` row, take (that row's needed content-height ÷ its flex factor), find the *largest* result across all `fr` rows, and use that as the size of `1fr` — applied to every `fr` row, including ones that didn't need the space.
+```css
+/* header/nav/footer end up stretched to match whichever row (e.g. a
+   content-heavy main area) needs the most height per fr-unit */
+.container {
+  display: grid;
+  grid-template-rows: 2fr 1fr 8fr 1fr; /* header nav main footer */
+}
+```
+Practical fix for holy-grail-style layouts (header/nav/footer should hug their content, only the main area should flex): mix `auto` and a single `1fr`, instead of `fr` on every row.
+```css
+.container {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  min-height: 100vh; /* floor, not a cap — content can still grow the page taller */
+}
+```
+
 **`repeat()`**: shorthand for writing the same track size over and over. `grid-template-columns: repeat(3, 1fr);` is identical to `1fr 1fr 1fr` — just shorter, and easier to change the count on later.
 ```css
 .container {
@@ -688,4 +706,7 @@ All selector types used across CSS Diner's 32 levels:
 - `text-decoration-style: none;` doesn't work — `none` isn't a valid `text-decoration-style` value (only `solid`/`double`/`dotted`/`dashed`/`wavy` are). To remove a link's underline, use `text-decoration: none;` (the shorthand) or `text-decoration-line: none;` specifically. Note `text-decoration: none;` only removes the underline — the default link color (and separate `:visited` purple) needs its own override, e.g. `color: inherit;` to blend into surrounding text, or a specific `color` value.
 - An input turning black/dark-ringed on focus with no obvious cause is usually the **browser's default focus `outline`**, not the `border` — outline is a separate property drawn outside the border, and its default color/style varies by browser/OS rather than always being blue. Style it explicitly instead of leaving it to guesswork: `input:focus { outline: 2px solid <color>; outline-offset: 2px; }`.
 - Changing `border` **width** (not just color) on `:focus` causes a small layout shift — e.g. `1px` → `2px` grows the element by a pixel on each side, nudging neighboring elements. Either keep the border width constant and only swap `border-color` on `:focus`, or use `outline` for the focus indicator instead of `border` — `outline` doesn't occupy layout space at all, so it never shifts anything.
+- `max-height: 100vh` on a grid/flex container that's meant to hold overflowing content (e.g. a Holy-Grail layout with a long article section) **clips content instead of scrolling it** — a `max-*` property caps size but doesn't add scroll behavior on its own, so anything past the cap is just hidden with no way to reach it. Two real fixes, depending on the desired UX:
+  - **Let the whole page scroll** (usually right for a normal content page): drop the height cap and use `min-height: 100vh` instead (a floor, not a ceiling) — or drop height constraints entirely and let the container size to its content, same result. The browser's normal page scrollbar appears once content exceeds one viewport, which is expected, not a bug to chase down.
+  - **Keep header/nav/footer pinned, scroll only inside one section** (app-shell feel): keep `max-height: 100vh` on the outer container, but add `overflow-y: auto` to just the inner section that needs to scroll, *plus* `min-height: 0` on that same section — grid/flex items default to `min-height: auto`, which means they refuse to shrink below their content size even with `overflow-y: auto` set, so without `min-height: 0` the scrollbar silently never appears and the overflow persists anyway.
 
