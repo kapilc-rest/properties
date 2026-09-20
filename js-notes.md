@@ -129,3 +129,11 @@
 - `event.button` identifies which physical button triggered the event: `0` = left/main, `1` = middle/wheel, `2` = right, `3`/`4` = browser back/forward buttons.
 - **Modifier keys** during a mouse event are read off the event object as booleans: `e.shiftKey`, `e.ctrlKey`, `e.altKey`, `e.metaKey` (Windows key / Cmd key depending on OS).
 - **Coordinates:** `e.screenX`/`e.screenY` are relative to the physical screen; `e.clientX`/`e.clientY` are relative to the browser's viewport (client area) — `clientX`/`clientY` is almost always what you want for positioning things relative to the page.
+
+## Keyboard Events
+
+- Three events: `keydown` (fires on press, repeats while held), `keyup` (fires on release), `keypress` (fires only for character-producing keys like letters/numbers, not arrows/Home/End — also repeats while held). **`keypress` is deprecated** in modern JS/browsers — prefer checking `event.key` inside `keydown` instead of relying on `keypress`.
+- **Order for a character key:** `keydown` → `keypress` → `keyup`. Both `keydown` and `keypress` fire *before* the textbox's value updates; `keyup` fires *after*.
+- **Order for a non-character key** (arrows, Tab, etc.): only `keydown` → `keyup` — no `keypress`.
+- `event.key` — the actual character/value produced (e.g. `"z"`, `"Enter"`, `"ArrowLeft"`).
+- `event.code` — the **physical** key on the keyboard regardless of layout/shift state (e.g. `"KeyZ"`). Use `code` when you care about physical key position (e.g. WASD game controls); use `key` when you care about the actual character typed.
