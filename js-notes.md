@@ -266,3 +266,12 @@ This is exactly the same rule from before (`this` = whatever's before the dot at
 - Quick check: `Object.getPrototypeOf(instance) === Constructor` is `false`; `Object.getPrototypeOf(instance) === Constructor.prototype` is `true`.
 - Both `.prototype` (from the function) and `[[Prototype]]` (from the instance) are two separate arrows landing on the **same destination** — the shared prototype object — just read with different tools, starting from different places.
 - To go from an instance **back to the constructor function**, use `instance.constructor` (works because the prototype object itself holds a `constructor` property pointing back to the function) — a related but distinct link from `[[Prototype]]`.
+
+## Primitive Wrapper Objects (Number, String, Boolean) & Auto-boxing
+
+- `Number`, `String`, `Boolean` are built-in **wrapper constructors** for their respective primitive types.
+- **As a plain function call** (no `new`) — does type conversion: `Number("42")` → `42`, `String(5)` → `"5"`. Totally normal, common.
+- **As a constructor** (with `new`) — creates a wrapper **object**, not a primitive: `typeof new Number(5)` is `"object"`, not `"number"`. `new Number(5) === 5` is `false` (different types); `new Number(5) == 5` is `true` (loose equality coerces). Generally avoid `new Number()`/`new String()`/`new Boolean()` — write plain primitives (`let n = 5`) instead.
+- **Auto-boxing:** primitives have no methods of their own (they're not objects), yet `x.toFixed(2)` still works on a plain number `x`. JS silently, temporarily wraps the primitive in its corresponding wrapper object to perform the lookup/call, then discards the wrapper immediately after — the original primitive is untouched. This is also why `Object.getPrototypeOf(somePrimitive)` returns something (e.g. `Number.prototype`) even though primitives don't really have their own `[[Prototype]]`.
+- `.prototype` still only exists on the **constructor function** (`Number.prototype` holds `toFixed`, `toString`, etc., shared via auto-boxing) — never on the primitive value itself; `(5).prototype` is `undefined`, same reasoning as any other value that isn't itself a function.
+- Wrapper constructors also carry **static** methods/properties directly on themselves (not on `.prototype`, so not inherited by instances) — e.g. `Number.isInteger()`, `Number.parseFloat()`, `Number.MAX_SAFE_INTEGER`.
