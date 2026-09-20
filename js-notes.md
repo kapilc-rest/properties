@@ -305,3 +305,11 @@ This is exactly the same rule from before (`this` = whatever's before the dot at
 - Covered by "every object": instances, arrays, and **functions** (since functions are objects too — even `Function` itself has one, pointing to `Function.prototype`).
 - **Not covered:** primitives (`5`, `"hi"`, `true`) aren't objects and don't genuinely have their own `[[Prototype]]` — auto-boxing creates a temporary wrapper *object* on the fly to answer property-access questions, and that wrapper is what actually has the slot. `null`/`undefined` aren't objects either and have no `[[Prototype]]` at all — hence `null.prototype` throwing instead of returning `undefined`.
 - **Exception to the "always ends at `Object.prototype`" pattern:** `Object.create(null)` deliberately creates an object whose `[[Prototype]]` is `null` from creation — it inherits nothing, not even `hasOwnProperty`/`toString`. Proof the usual chain is a default, not an unbreakable rule.
+
+## Reading Node's `[Object: null prototype] {}` output
+
+- Two separate signals in that one line, easy to conflate:
+  - **`{}`** — Node's normal object-printing format, showing enumerable own properties. Prints empty here not because `Object.prototype` is empty, but because its real methods (`valueOf`, `toString`, `hasOwnProperty`, etc.) are all marked **non-enumerable** — deliberately hidden from default printing, `for...in`, and `Object.keys()`, though they still exist and still work.
+  - **`[Object: null prototype]`** — an extra label Node adds *only* when the object's **own** `[[Prototype]]` is `null` (i.e. `Object.getPrototypeOf(thisThing) === null`). Flags an unusual case, since almost every object (even a bare `{}` you type yourself) has *some* prototype.
+- Don't conflate "`Object.prototype`'s own `[[Prototype]]` is `null`" (true — nothing above it in the chain) with "`Object.prototype` itself is empty/nonexistent" (false — it's a real, populated object; its content is just hidden by non-enumerability).
+- To actually see the hidden non-enumerable methods: `Object.getOwnPropertyNames(Object.prototype)` — unlike `Object.keys()`, this lists non-enumerable own properties too.
