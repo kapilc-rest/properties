@@ -145,3 +145,15 @@
 - This works precisely because of bubbling covered earlier — a click on a child element bubbles up through its ancestors, so the parent's single listener still fires.
 - **Why it's worth doing:** less memory (one handler instead of N), faster page setup, and it naturally handles elements **added to the DOM later** — a listener on individual children would need to be re-attached to any new child, but a delegated listener on the parent covers new children automatically since it's the bubble, not the element itself, being listened for.
 - A delegated listener on `document` can also start working immediately once elements render, without waiting for `DOMContentLoaded`/`load`.
+
+## dispatchEvent — Triggering Events Programmatically
+
+- You can generate events from code instead of waiting for real user input: create an event object, then fire it on an element.
+  ```javascript
+  let clickEvent = new Event("click");
+  btn.dispatchEvent(clickEvent);
+  ```
+  This runs `btn`'s existing `click` listeners exactly as if a real click happened.
+- `new Event(type, options)` — `options` is `{ bubbles, cancelable }`, both `false` by default. So a programmatically created event **won't bubble** unless you explicitly pass `{ bubbles: true }`.
+- **Prefer specific constructors** (`MouseEvent`, `KeyboardEvent`, `FocusEvent`) over the generic `Event` when simulating a real interaction — they carry event-type-specific data the generic `Event` doesn't, e.g. `new MouseEvent("click", { clientX: 150, clientY: 150, bubbles: true })`.
+- `event.isTrusted` — `true` for events from real user action, `false` for anything dispatched via code. Useful if you ever need to distinguish "did a human actually do this" from a simulated event (e.g. anti-abuse checks).
