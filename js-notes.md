@@ -172,3 +172,49 @@
 - **Where the argument comes from:** when a callback is called with data (`callback(array[i])`), it's the *receiving* function deciding what to pass — the callback's parameter name is just a local placeholder you chose, filled in by whoever calls it. This is exactly why `event` "shows up out of nowhere" inside an event listener: `addEventListener` itself calls your callback and supplies the event object as the argument — you're not creating `event`, you're just naming the parameter that receives it.
 - **A named function passed as a callback must NOT be called** in the argument list — pass the bare name (`el.addEventListener('click', myHandler)`), not `myHandler()`. Adding `()` calls it immediately and passes its *return value* as the callback instead of the function itself, which is essentially never what you want.
 - `array.forEach`, `array.map`, and `addEventListener` are all just regular functions that happen to accept a callback as one of their arguments — nothing about callbacks is special-cased to these three, it's a general pattern used all over JS (including promises/async code later on).
+
+## Object Constructors
+
+- A **constructor** is just a regular function, called with `new`, used as a template to stamp out multiple similar objects (**instances**) instead of writing each one out as a separate object literal.
+  ```javascript
+  function Player(name, marker) {
+    this.name = name;
+    this.marker = marker;
+  }
+  const player = new Player("steve", "X");
+  ```
+- **What `new` actually does** (this is the important part — it's doing three things silently): creates a new empty object, sets `this` inside the function to point at that new object, and returns the object automatically — even though the function body has no `return`. Calling `Player("steve", "X")` *without* `new` skips all of this and just runs the function normally (so `this` wouldn't refer to a new object — it'd likely be `undefined` or the global object, a common source of confusing bugs).
+- **Safeguard against forgetting `new`:** check `new.target` (a meta-property that's only set when the function was invoked via `new`) and throw if it's missing:
+  ```javascript
+  function Player(name, marker) {
+    if (!new.target) throw Error("You must use 'new' to call this constructor");
+    this.name = name;
+  }
+  ```
+- **Prefer `return` over `console.log` inside functions** you're building for reuse (e.g. an `info()` method) — a function that returns a value can be used anywhere (logged, stored, passed on), while one that only logs is locked into that one use.
+
+## The Prototype & Prototypal Inheritance
+
+- Every object in JS has a hidden `[[Prototype]]` — itself just another object — that it inherits properties/methods from. If a property isn't found directly on the object, JS automatically looks up the `[[Prototype]]` chain until it finds it (or reaches the end, where it's `null`, and returns `undefined`).
+- **Defining a method "on the prototype"** means attaching it to the constructor's `.prototype` object instead of inside the constructor body — every instance then shares that **one** function instead of each instance getting its own copy (this is the memory-saving fix to the "every player gets its own `sayName` copy" problem from the previous lesson):
+  ```javascript
+  Player.prototype.sayHello = function() { console.log("Hello!"); };
+  player1.sayHello(); // works — found via the prototype chain, not on player1 itself
+  ```
+- **`Object.getPrototypeOf(obj)`** — reads an object's actual `[[Prototype]]`. **`Constructor.prototype`** — a *different* thing: it's the property on the constructor *function* that determines what new instances' `[[Prototype]]` gets set to when you call it with `new`. Easy to conflate; `.prototype` sets it up front, `Object.getPrototypeOf()` reads it back afterward.
+- `.__proto__` is an old, non-standard/deprecated way to get/set `[[Prototype]]` directly on an object — avoid it; use `Object.getPrototypeOf()`/`Object.setPrototypeOf()` instead.
+- **The chain keeps going:** `Player.prototype` itself has a `[[Prototype]]`, which by default is `Object.prototype` (where built-ins like `.valueOf()` and `.hasOwnProperty()` actually live). `Object.getPrototypeOf(Object.prototype)` is `null` — the end of every chain. An object can only have **one** `[[Prototype]]` (single inheritance, not multiple).
+- **Why bother with prototypes:** (1) memory — one shared function beats N copies; (2) reuse — lets unrelated constructors share behavior via inheritance.
+- **Setting up inheritance between constructors** — `Object.setPrototypeOf(Child.prototype, Parent.prototype)` makes `Child` instances inherit `Parent`'s prototype methods too:
+  ```javascript
+  function Person(name) { this.name = name; }
+  Person.prototype.sayName = function() { console.log(`Hi, I'm ${this.name}`); };
+
+  function Player(name, marker) { this.name = name; this.marker = marker; }
+  Object.setPrototypeOf(Player.prototype, Person.prototype);
+
+  const p = new Player("steve", "X");
+  p.sayName(); // "Hi, I'm steve" — inherited from Person
+  ```
+  **Must be done *before* creating any instances** — setting it up afterward can cause performance issues.
+- **Never do `Player.prototype = Person.prototype`** — this makes both point to the literal **same object in memory**, so editing one (e.g. overwriting a method on `Enemy.prototype` when `Enemy.prototype = Person.prototype`) silently corrupts the other's behavior too. Always use `Object.setPrototypeOf()` instead, which links them without merging them into one object.
