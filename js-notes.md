@@ -258,3 +258,11 @@ This is exactly the same rule from before (`this` = whatever's before the dot at
   - Returns an **object** → that returned object is used **instead of** the auto-created one.
 - A function that only does `return a + b` (no `this.x = ...` anywhere) still "works" when called with `new` — you get back the auto-created object, and any prototype methods are still reachable through it — but the object itself is empty, since nothing was ever assigned to `this`. Calling an inherited method on it (e.g. one expecting `this.a`/`this.b`) will silently operate on `undefined` values rather than erroring.
 - Moral: a real constructor needs to explicitly assign onto `this` (`this.a = a`) — merely `return`ing a computed value from a function called with `new` does not populate the instance.
+
+## `.prototype` vs `[[Prototype]]` — clearing up a common mix-up
+
+- `Constructor.prototype` — a visible property **on the function**, pointing to the prototype (blueprint) object.
+- `instance.[[Prototype]]` — a hidden internal link **on the instance**, also pointing to that **same** prototype object — but it does **not** point to the constructor function itself.
+- Quick check: `Object.getPrototypeOf(instance) === Constructor` is `false`; `Object.getPrototypeOf(instance) === Constructor.prototype` is `true`.
+- Both `.prototype` (from the function) and `[[Prototype]]` (from the instance) are two separate arrows landing on the **same destination** — the shared prototype object — just read with different tools, starting from different places.
+- To go from an instance **back to the constructor function**, use `instance.constructor` (works because the prototype object itself holds a `constructor` property pointing back to the function) — a related but distinct link from `[[Prototype]]`.
