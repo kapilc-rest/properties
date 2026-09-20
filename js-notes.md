@@ -52,3 +52,13 @@
 - Less common: `fill(value, start, end)` fills a range with a repeated value; `copyWithin(target, start, end)` copies part of the array over another part of itself; `flat(depth)`/`flatMap(fn)` flatten nested arrays.
 - **Sort comparator detail:** it only needs to return positive/negative/zero (not strictly ±1), so `(a, b) => a - b` works fine. For sorting strings correctly (accented letters etc.), prefer `(a, b) => a.localeCompare(b)` over `>`/`<`, since default comparison is by character code and can mis-sort things like `Ö`.
 - Only `sort`, `reverse`, and `splice` mutate the array in place; the rest (`map`, `filter`, `slice`, `concat`, etc.) return new arrays.
+
+## Array reference odds & ends (MDN)
+
+- `Array.from(iterableOrArrayLike)` — builds a real array from something array-like (e.g. `arguments`, a `NodeList`) or an iterable.
+- `Array.of(...items)` — builds an array from the given arguments, regardless of count/type (avoids the `new Array(2)` "empty slots" trap).
+- **Non-mutating versions** of the classic mutators now exist: `toReversed()`, `toSorted()`, `toSpliced()`, `with(index, value)` — same result as `reverse`/`sort`/`splice`/index-assignment, but return a **new** array instead of mutating.
+- **Copying an array (shallow):** spread `[...arr]`, `Array.from(arr)`, and `arr.slice()` are all equivalent — they copy the array itself but object *elements* inside are still shared by reference.
+- **Deep copy:** use `structuredClone(arr)` (preferred) or `JSON.parse(JSON.stringify(arr))` (older trick — drops functions/`undefined`/etc.) when nested objects also need to be independent.
+- Assigning an array to a new variable (`const b = a`) does **not** copy anything — `b` and `a` are two names for the same array (this is just the reference-copy rule for objects again).
+- Array methods are **generic**: they only rely on `length` + numeric indices, so they also work on "array-like" objects that aren't real arrays (`arguments`, DOM `NodeList`) via `Array.prototype.method.call(arrayLikeThing, ...)`.
