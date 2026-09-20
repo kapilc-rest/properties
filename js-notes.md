@@ -281,3 +281,11 @@ This is exactly the same rule from before (`this` = whatever's before the dot at
 - Same relationship holds for JS's own built-ins, not just custom constructors: `a.prototype` is `undefined` (arrays are objects, not functions — no `.prototype` to have), while `Object.getPrototypeOf(a) === Array.prototype` is `true`.
 - `a.constructor` → `Array` (the built-in constructor function), via the same "prototype object carries a `constructor` property" mechanism as any custom constructor.
 - `a == Array` / `a === Array` are both `false` — an instance and its constructor function are categorically different things (object vs. function); an instance's `[[Prototype]]` points to `Constructor.prototype`, never to `Constructor` itself.
+
+## Functions Are Objects Too
+
+- Functions in JS **are objects** — `typeof fn` reports `"function"` as a distinct label for convenience, but `fn instanceof Object` is `true`. The real difference: a function is an object with an extra internal capability (`[[Call]]`) that makes it callable — everything else about being an object (properties, prototype chain) still applies.
+- This is *why* `.prototype` can exist on functions at all — it's just an ordinary property, auto-populated on every function object at creation, not some special non-object magic.
+- **Every function's prototype chain:** `someFunction → Function.prototype → Object.prototype → null`. So `Object.getPrototypeOf(Array)` (or any function) returns `Function.prototype`.
+- **`Function.prototype` is itself a function** (an empty, callable, anonymous one) — unusual among the built-in prototypes, which are normally plain objects.
+- `Function.prototype` **can't inherit from itself** (that would create an infinite loop), so its own `[[Prototype]]` is `Object.prototype` directly — skipping the usual "next stop is `Function.prototype`" pattern. This is how the chain terminates cleanly instead of looping forever.
