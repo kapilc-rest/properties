@@ -165,3 +165,10 @@
 - Dispatch it the same way as any other event: `element.dispatchEvent(customEvent)`.
 - Listeners attach normally via `addEventListener("yourEventName", handler)` — `e.detail` inside the handler holds whatever data you passed in.
 - **Why bother:** decouples code that triggers something from code that reacts to it — e.g. a `highlight()` function can fire a `"mark"` event after doing its work, and any number of independent listeners (even in separate files) can react to that, without `highlight()` needing to know or call them directly. This is essentially the pub/sub pattern implemented with native DOM events instead of a custom event-emitter class.
+
+## Callbacks
+
+- A **callback** is simply a function passed into another function as an argument, to be called *by* that function later. That's the entire definition — nothing more magical than that.
+- **Where the argument comes from:** when a callback is called with data (`callback(array[i])`), it's the *receiving* function deciding what to pass — the callback's parameter name is just a local placeholder you chose, filled in by whoever calls it. This is exactly why `event` "shows up out of nowhere" inside an event listener: `addEventListener` itself calls your callback and supplies the event object as the argument — you're not creating `event`, you're just naming the parameter that receives it.
+- **A named function passed as a callback must NOT be called** in the argument list — pass the bare name (`el.addEventListener('click', myHandler)`), not `myHandler()`. Adding `()` calls it immediately and passes its *return value* as the callback instead of the function itself, which is essentially never what you want.
+- `array.forEach`, `array.map`, and `addEventListener` are all just regular functions that happen to accept a callback as one of their arguments — nothing about callbacks is special-cased to these three, it's a general pattern used all over JS (including promises/async code later on).
