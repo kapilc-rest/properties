@@ -289,3 +289,11 @@ This is exactly the same rule from before (`this` = whatever's before the dot at
 - **Every function's prototype chain:** `someFunction → Function.prototype → Object.prototype → null`. So `Object.getPrototypeOf(Array)` (or any function) returns `Function.prototype`.
 - **`Function.prototype` is itself a function** (an empty, callable, anonymous one) — unusual among the built-in prototypes, which are normally plain objects.
 - `Function.prototype` **can't inherit from itself** (that would create an infinite loop), so its own `[[Prototype]]` is `Object.prototype` directly — skipping the usual "next stop is `Function.prototype`" pattern. This is how the chain terminates cleanly instead of looping forever.
+
+## The Root of Every Prototype Chain
+
+- `Object.prototype` is the true root of **every** prototype chain in JS — its own `[[Prototype]]` is `null`. Node signals this by printing it as `[Object: null prototype] {}` (the `{}` is misleading — its real methods like `hasOwnProperty`/`toString`/`valueOf` exist but are non-enumerable, so they're hidden from default printing).
+- `{}.prototype` → `undefined` (a plain object isn't a function, so no `.prototype` property — consistent with every other non-function value).
+- `null.prototype` → **throws a `TypeError`**, unlike `{}.prototype`. Key distinction: `{}` is a real object that simply lacks that property (lookup succeeds, returns `undefined`); `null` isn't an object at all and has no properties whatsoever. Auto-boxing (which rescues primitives like numbers/strings during property access) explicitly does **not** apply to `null`/`undefined` — so any property access on them throws immediately.
+- `Function` (the built-in constructor that creates functions) is itself a function, so it follows the same universal rule as everything else: `Object.getPrototypeOf(Function) === Function.prototype`. Even the constructor that makes functions doesn't escape its own rule.
+- **Full chain, top to bottom, for literally any function** (custom or built-in): `someFunction → Function.prototype → Object.prototype → null`.
