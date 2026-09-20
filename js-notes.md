@@ -249,3 +249,12 @@ getBrand(); // undefined — this is no longer `car`, since there's no `car.` at
 This is exactly the same rule from before (`this` = whatever's before the dot at call time) — there's simply nothing before the dot anymore once it's a bare variable. Fix with `.bind(car)` if you need to pass the method around while keeping its original `this`.
 
 **Arrow functions confirmed again here:** they don't get their own `this` — they use whatever `this` was in the surrounding code where they were *written*, not where they're called. This is why an arrow function used as a constructor's prototype method breaks (it grabs `this` from the outer/global scope instead of the instance), matching what's already noted above about arrow functions and object methods.
+
+## `new` + Return Values (a subtle constructor rule)
+
+- Every function has a `.prototype` object by default — even ordinary, non-constructor-intended functions get one automatically.
+- **If a function called with `new` explicitly `return`s something:**
+  - Returns a **primitive** (string, number, boolean, etc.) → the return value is **discarded**; `new` returns the auto-created object as normal.
+  - Returns an **object** → that returned object is used **instead of** the auto-created one.
+- A function that only does `return a + b` (no `this.x = ...` anywhere) still "works" when called with `new` — you get back the auto-created object, and any prototype methods are still reachable through it — but the object itself is empty, since nothing was ever assigned to `this`. Calling an inherited method on it (e.g. one expecting `this.a`/`this.b`) will silently operate on `undefined` values rather than erroring.
+- Moral: a real constructor needs to explicitly assign onto `this` (`this.a = a`) — merely `return`ing a computed value from a function called with `new` does not populate the instance.
