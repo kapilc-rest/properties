@@ -275,3 +275,9 @@ This is exactly the same rule from before (`this` = whatever's before the dot at
 - **Auto-boxing:** primitives have no methods of their own (they're not objects), yet `x.toFixed(2)` still works on a plain number `x`. JS silently, temporarily wraps the primitive in its corresponding wrapper object to perform the lookup/call, then discards the wrapper immediately after — the original primitive is untouched. This is also why `Object.getPrototypeOf(somePrimitive)` returns something (e.g. `Number.prototype`) even though primitives don't really have their own `[[Prototype]]`.
 - `.prototype` still only exists on the **constructor function** (`Number.prototype` holds `toFixed`, `toString`, etc., shared via auto-boxing) — never on the primitive value itself; `(5).prototype` is `undefined`, same reasoning as any other value that isn't itself a function.
 - Wrapper constructors also carry **static** methods/properties directly on themselves (not on `.prototype`, so not inherited by instances) — e.g. `Number.isInteger()`, `Number.parseFloat()`, `Number.MAX_SAFE_INTEGER`.
+
+## Confirming .prototype / [[Prototype]] with built-ins (Array)
+
+- Same relationship holds for JS's own built-ins, not just custom constructors: `a.prototype` is `undefined` (arrays are objects, not functions — no `.prototype` to have), while `Object.getPrototypeOf(a) === Array.prototype` is `true`.
+- `a.constructor` → `Array` (the built-in constructor function), via the same "prototype object carries a `constructor` property" mechanism as any custom constructor.
+- `a == Array` / `a === Array` are both `false` — an instance and its constructor function are categorically different things (object vs. function); an instance's `[[Prototype]]` points to `Constructor.prototype`, never to `Constructor` itself.
