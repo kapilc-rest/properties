@@ -92,3 +92,12 @@
 - The listener callback receives an **event object** (conventionally named `e`) — gives access to details like `e.target` (the actual node that triggered the event), which key/button was involved, etc. This is passed automatically by the browser; `e` is just a variable name, not special syntax.
 - **Attaching listeners to many nodes at once:** get a NodeList via `querySelectorAll`, then `nodeList.forEach(node => node.addEventListener(...))` — NodeLists support `forEach` even though they lack most other array methods.
 - Passing a **named function** as the handler (`btn.addEventListener("click", alertFunction)`) instead of an inline anonymous function keeps code reusable and readable when the same behavior is needed in multiple places.
+
+## Arrow Functions — Basics
+
+- `(arg1, arg2) => expression` — shorthand for a function that evaluates `expression` and implicitly returns it (no `return` keyword needed).
+- Single parameter: parens are optional — `n => n * 2` works same as `(n) => n * 2`.
+- Zero parameters: parens are required — `() => alert("Hello!")`.
+- **Multiline body:** wrapping the body in `{ }` switches to a block body — once you use curly braces, you need an explicit `return`, same as a regular function. `(a, b) => { return a + b; }` — implicit return only applies to the bare-expression form.
+- This is the same rule behind the earlier "wrap object literal returns in parens" note — `x => ({ key: x })` needs parens specifically because `{` right after `=>` is parsed as the start of a block body, not an object literal.
+- Good for short one-liners and callbacks; can be assigned conditionally too, e.g. `const fn = cond ? () => a() : () => b();`.
