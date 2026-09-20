@@ -101,3 +101,10 @@
 - **Multiline body:** wrapping the body in `{ }` switches to a block body — once you use curly braces, you need an explicit `return`, same as a regular function. `(a, b) => { return a + b; }` — implicit return only applies to the bare-expression form.
 - This is the same rule behind the earlier "wrap object literal returns in parens" note — `x => ({ key: x })` needs parens specifically because `{` right after `=>` is parsed as the start of a block body, not an object literal.
 - Good for short one-liners and callbacks; can be assigned conditionally too, e.g. `const fn = cond ? () => a() : () => b();`.
+
+## Events — additions
+
+- `element.removeEventListener("click", handlerFn)` — removes a previously added listener. Only works if you pass the **same named function reference** used in `addEventListener` (an inline anonymous function can't be removed this way, since you have no reference to it afterward).
+- **Why `addEventListener` is preferred over the `onclick` property specifically:** calling `addEventListener` multiple times on the same event lets you stack multiple independent handlers; assigning `el.onclick = fn` a second time **overwrites** the first, since it's just a property assignment.
+- Some event objects carry extra properties specific to their event type — e.g. a `keydown` event's object is a `KeyboardEvent` with a `.key` property telling you exactly which key was pressed (`event.key`).
+- `event.preventDefault()` — stops the browser's default action for that event (e.g. stops a form's `submit` event from actually submitting/reloading the page) — used for things like custom client-side validation before allowing submission.
