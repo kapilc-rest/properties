@@ -118,3 +118,14 @@
 - `event.preventDefault()` — cancels the default browser action, but does **not** stop the event from continuing to bubble.
 - **Other event object properties:** `target` (element event occurred on) vs `currentTarget` (element the *current* handler is attached to — differs from `target` when the event is being handled during bubbling on an ancestor); `type` (event name, e.g. `"click"`); `bubbles`/`cancelable` (booleans describing the event type itself); `defaultPrevented` (true once `preventDefault()` was called).
 - The event object only exists for the duration of the handler(s) running — it's discarded afterward.
+
+## Mouse Events
+
+- A single `click` is actually a sequence of **three** events firing in order: `mousedown` → `mouseup` → `click`. If you press down, drag off the element, and release elsewhere, only `mousedown` fires — `click` never fires, since it requires both down *and* up on the same element.
+- `dblclick` fires **after** two full `click` sequences (7 events total: down/up/click twice, then `dblclick`). If you listen for both `click` and `dblclick` on the same element, you can't cleanly tell which the user intended without extra logic — worth avoiding unless you actually need double-click behavior.
+- `mouseover`/`mouseout` **bubble** and also fire when the pointer crosses into/out of **child** elements — so hovering over a child re-triggers them on the parent.
+- `mouseenter`/`mouseleave` do **not** bubble and only fire for the element itself, not its children — generally what you actually want for hover effects, since it avoids the repeated-firing problem `mouseover`/`mouseout` have with nested elements.
+- `mousemove` fires very frequently (many times per second) — expensive if the handler does real work. Best practice: only attach the listener while it's actually needed (e.g. `el.onmousemove = handler` then `el.onmousemove = null` when done), or throttle/debounce it.
+- `event.button` identifies which physical button triggered the event: `0` = left/main, `1` = middle/wheel, `2` = right, `3`/`4` = browser back/forward buttons.
+- **Modifier keys** during a mouse event are read off the event object as booleans: `e.shiftKey`, `e.ctrlKey`, `e.altKey`, `e.metaKey` (Windows key / Cmd key depending on OS).
+- **Coordinates:** `e.screenX`/`e.screenY` are relative to the physical screen; `e.clientX`/`e.clientY` are relative to the browser's viewport (client area) — `clientX`/`clientY` is almost always what you want for positioning things relative to the page.
