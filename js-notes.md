@@ -227,3 +227,25 @@
 - **⚠️ Common pitfall — shared mutable default values on a prototype.** If a prototype has a property that's a mutable value (like an array or object) rather than a primitive, and an inherited method *mutates* that value in place (e.g. `this.stomach.push(food)`) instead of reassigning it (`this.stomach = [food]`), every inheriting object accidentally shares and corrupts the **same** underlying array/object — because none of them ever created their own copy; they were all just reading (and then mutating) the one found on the prototype. **Fix:** either give each object its own copy of that property directly (not relying on inheritance for it), or always reassign (`=`) instead of mutating in place.
 - **`for...in` iterates inherited enumerable properties too** (not just the object's own) — this differs from `Object.keys()`/`Object.values()`, which only return the object's **own** properties and ignore anything inherited. Use `obj.hasOwnProperty(key)` inside a `for...in` loop if you need to filter out inherited properties.
 - Built-in methods like `.hasOwnProperty()` don't show up in `for...in` themselves, even though they're technically inherited (from `Object.prototype`) — because they're marked non-enumerable, and `for...in` only lists enumerable properties.
+
+## `this` — The Four Call Patterns
+
+`this` is determined entirely by *how* a function is called. Four patterns:
+
+1. **Simple call** (`someFunction()`, no object before it): in **non-strict mode**, `this` is the global object (`window` in browsers, `global` in Node). In **strict mode** (`"use strict"` at the top of a file/function), `this` is `undefined` instead — strict mode exists partly to stop `this` from silently defaulting to the global object here, which is rarely what you want. Nested functions inherit the strict-mode setting of their outer function.
+2. **Method call** (`obj.method()`): `this` is `obj` — the object before the dot at call time (covered already).
+3. **Constructor call** (`new Fn()`): `this` is the newly created object (covered already).
+4. **Indirect call** — explicitly setting `this` via `call()`, `apply()`, or `bind()` on a function:
+   - `fn.call(thisValue, arg1, arg2)` — calls `fn` immediately with `this` set to `thisValue`, args passed individually.
+   - `fn.apply(thisValue, [arg1, arg2])` — same as `call`, but args passed as an array.
+   - `fn.bind(thisValue)` — does **not** call `fn`; instead returns a **new function** permanently locked to `thisValue`, which you can call later (or pass around, e.g. as a callback) without losing the binding.
+
+**Extracting a method into a variable loses its `this` binding:**
+```javascript
+const car = { brand: "Honda", getBrand() { return this.brand; } };
+const getBrand = car.getBrand;
+getBrand(); // undefined — this is no longer `car`, since there's no `car.` at the call site
+```
+This is exactly the same rule from before (`this` = whatever's before the dot at call time) — there's simply nothing before the dot anymore once it's a bare variable. Fix with `.bind(car)` if you need to pass the method around while keeping its original `this`.
+
+**Arrow functions confirmed again here:** they don't get their own `this` — they use whatever `this` was in the surrounding code where they were *written*, not where they're called. This is why an arrow function used as a constructor's prototype method breaks (it grabs `this` from the outer/global scope instead of the instance), matching what's already noted above about arrow functions and object methods.
