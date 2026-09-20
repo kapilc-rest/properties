@@ -137,3 +137,11 @@
 - **Order for a non-character key** (arrows, Tab, etc.): only `keydown` → `keyup` — no `keypress`.
 - `event.key` — the actual character/value produced (e.g. `"z"`, `"Enter"`, `"ArrowLeft"`).
 - `event.code` — the **physical** key on the keyboard regardless of layout/shift state (e.g. `"KeyZ"`). Use `code` when you care about physical key position (e.g. WASD game controls); use `key` when you care about the actual character typed.
+
+## Event Delegation
+
+- **The problem:** attaching a separate event listener to every individual child element (e.g. every `<a>` in a menu) doesn't scale — each handler is a function object taking up memory, and setting up many of them adds startup delay.
+- **The fix:** attach **one** listener to a common **parent** element instead, and rely on bubbling to catch clicks from any of its children. Inside the handler, check `event.target` to figure out which specific child actually triggered it (e.g. `switch (event.target.id) { ... }`).
+- This works precisely because of bubbling covered earlier — a click on a child element bubbles up through its ancestors, so the parent's single listener still fires.
+- **Why it's worth doing:** less memory (one handler instead of N), faster page setup, and it naturally handles elements **added to the DOM later** — a listener on individual children would need to be re-attached to any new child, but a delegated listener on the parent covers new children automatically since it's the bubble, not the element itself, being listened for.
+- A delegated listener on `document` can also start working immediately once elements render, without waiting for `DOMContentLoaded`/`load`.
