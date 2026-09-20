@@ -62,3 +62,33 @@
 - **Deep copy:** use `structuredClone(arr)` (preferred) or `JSON.parse(JSON.stringify(arr))` (older trick — drops functions/`undefined`/etc.) when nested objects also need to be independent.
 - Assigning an array to a new variable (`const b = a`) does **not** copy anything — `b` and `a` are two names for the same array (this is just the reference-copy rule for objects again).
 - Array methods are **generic**: they only rely on `length` + numeric indices, so they also work on "array-like" objects that aren't real arrays (`arguments`, DOM `NodeList`) via `Array.prototype.method.call(arrayLikeThing, ...)`.
+
+## DOM Manipulation
+
+- The **DOM** is a tree of "nodes" representing the page; **elements** are the node type you'll manipulate most.
+- **Selecting:**
+  - `document.querySelector(selector)` — first match (CSS-style selector string).
+  - `document.querySelectorAll(selector)` — **NodeList** of all matches — looks/acts array-like but is missing many array methods (no `map`, `filter`, etc.). Convert with `Array.from(nodeList)` or `[...nodeList]` if you need those. `forEach` does work directly on a NodeList though.
+  - Relational properties also work off an existing reference: `.firstElementChild`, `.lastElementChild`, `.previousElementSibling`, `.nextElementSibling`.
+- **Creating/inserting elements:**
+  - `document.createElement(tagName)` — creates an element **in memory only**; it's not in the DOM until you insert it.
+  - `parentNode.appendChild(childNode)` — appends as last child.
+  - `parentNode.insertBefore(newNode, referenceNode)` — inserts before a specific existing child.
+  - `parentNode.removeChild(child)` — removes and returns the removed node.
+- **Altering elements:**
+  - Inline style: `div.style.color = "blue"` (camelCase for kebab-case CSS props — `backgroundColor`, not `background-color`, when using dot notation; bracket notation `div.style["background-color"]` accepts either).
+  - Attributes: `setAttribute(name, value)`, `getAttribute(name)`, `removeAttribute(name)`.
+  - Classes: `classList.add(cls)`, `classList.remove(cls)`, `classList.toggle(cls)` — toggling classes is generally cleaner than manually setting inline styles.
+  - Text: `div.textContent = "..."` — **preferred** over `div.innerHTML = "..."`, since `innerHTML` parses/renders raw HTML and is a common XSS (cross-site scripting) vector if the content ever comes from user input.
+- **Script timing:** if your `<script>` tag is in `<head>` and runs before the DOM is parsed, `document.querySelector` etc. won't find anything yet (nodes don't exist yet). Fix: put the script tag at the bottom of `<body>`, or use `<script src="..." defer></script>` in `<head>` (runs after HTML parsing completes).
+
+## Events
+
+- **Three ways to attach event handling**, in increasing order of preference:
+  1. Inline HTML attribute: `<button onclick="alert('hi')">` — mixes JS into HTML, and only one handler per element.
+  2. JS property: `btn.onclick = () => {...}` — keeps JS separate, but still only one handler per event type per element (assigning again overwrites the previous one).
+  3. `btn.addEventListener("click", fn)` — **preferred**: keeps separation of concerns, and supports multiple listeners on the same event without overwriting each other.
+- A **callback** is just a function passed as an argument to another function — the handler function passed to `addEventListener` is a callback.
+- The listener callback receives an **event object** (conventionally named `e`) — gives access to details like `e.target` (the actual node that triggered the event), which key/button was involved, etc. This is passed automatically by the browser; `e` is just a variable name, not special syntax.
+- **Attaching listeners to many nodes at once:** get a NodeList via `querySelectorAll`, then `nodeList.forEach(node => node.addEventListener(...))` — NodeLists support `forEach` even though they lack most other array methods.
+- Passing a **named function** as the handler (`btn.addEventListener("click", alertFunction)`) instead of an inline anonymous function keeps code reusable and readable when the same behavior is needed in multiple places.
