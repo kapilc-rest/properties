@@ -157,3 +157,11 @@
 - `new Event(type, options)` — `options` is `{ bubbles, cancelable }`, both `false` by default. So a programmatically created event **won't bubble** unless you explicitly pass `{ bubbles: true }`.
 - **Prefer specific constructors** (`MouseEvent`, `KeyboardEvent`, `FocusEvent`) over the generic `Event` when simulating a real interaction — they carry event-type-specific data the generic `Event` doesn't, e.g. `new MouseEvent("click", { clientX: 150, clientY: 150, bubbles: true })`.
 - `event.isTrusted` — `true` for events from real user action, `false` for anything dispatched via code. Useful if you ever need to distinguish "did a human actually do this" from a simulated event (e.g. anti-abuse checks).
+
+## Custom Events
+
+- Standard events (`click`, `input`, `submit`) are triggered by the browser. **Custom events** are ones you define yourself, for communication between different parts of your own code.
+- `new CustomEvent(eventType, { detail: {...} })` — like `Event`, but adds a `detail` property carrying whatever custom data you want to attach to the event.
+- Dispatch it the same way as any other event: `element.dispatchEvent(customEvent)`.
+- Listeners attach normally via `addEventListener("yourEventName", handler)` — `e.detail` inside the handler holds whatever data you passed in.
+- **Why bother:** decouples code that triggers something from code that reacts to it — e.g. a `highlight()` function can fire a `"mark"` event after doing its work, and any number of independent listeners (even in separate files) can react to that, without `highlight()` needing to know or call them directly. This is essentially the pub/sub pattern implemented with native DOM events instead of a custom event-emitter class.
