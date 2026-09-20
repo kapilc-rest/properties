@@ -297,3 +297,11 @@ This is exactly the same rule from before (`this` = whatever's before the dot at
 - `null.prototype` → **throws a `TypeError`**, unlike `{}.prototype`. Key distinction: `{}` is a real object that simply lacks that property (lookup succeeds, returns `undefined`); `null` isn't an object at all and has no properties whatsoever. Auto-boxing (which rescues primitives like numbers/strings during property access) explicitly does **not** apply to `null`/`undefined` — so any property access on them throws immediately.
 - `Function` (the built-in constructor that creates functions) is itself a function, so it follows the same universal rule as everything else: `Object.getPrototypeOf(Function) === Function.prototype`. Even the constructor that makes functions doesn't escape its own rule.
 - **Full chain, top to bottom, for literally any function** (custom or built-in): `someFunction → Function.prototype → Object.prototype → null`.
+
+## "Every object has a [[Prototype]]" — what this actually means
+
+- Every object has the `[[Prototype]]` **slot** — but "has the slot" ≠ "points to something above it." The slot's value can be another object (normal case) or `null` (meaning "nothing above this").
+- `Object.prototype` itself still technically **has** a `[[Prototype]]` — its value is just `null`, which is why the chain terminates there instead of looping.
+- Covered by "every object": instances, arrays, and **functions** (since functions are objects too — even `Function` itself has one, pointing to `Function.prototype`).
+- **Not covered:** primitives (`5`, `"hi"`, `true`) aren't objects and don't genuinely have their own `[[Prototype]]` — auto-boxing creates a temporary wrapper *object* on the fly to answer property-access questions, and that wrapper is what actually has the slot. `null`/`undefined` aren't objects either and have no `[[Prototype]]` at all — hence `null.prototype` throwing instead of returning `undefined`.
+- **Exception to the "always ends at `Object.prototype`" pattern:** `Object.create(null)` deliberately creates an object whose `[[Prototype]]` is `null` from creation — it inherits nothing, not even `hasOwnProperty`/`toString`. Proof the usual chain is a default, not an unbreakable rule.
