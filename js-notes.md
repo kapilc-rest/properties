@@ -108,3 +108,13 @@
 - **Why `addEventListener` is preferred over the `onclick` property specifically:** calling `addEventListener` multiple times on the same event lets you stack multiple independent handlers; assigning `el.onclick = fn` a second time **overwrites** the first, since it's just a property assignment.
 - Some event objects carry extra properties specific to their event type — e.g. a `keydown` event's object is a `KeyboardEvent` with a `.key` property telling you exactly which key was pressed (`event.key`).
 - `event.preventDefault()` — stops the browser's default action for that event (e.g. stops a form's `submit` event from actually submitting/reloading the page) — used for things like custom client-side validation before allowing submission.
+
+## Event Flow: Bubbling & Capturing
+
+- **Bubbling** — an event starts at the specific element clicked and flows **upward** through its ancestors (button → div → body → html → document). This is the default/most common model.
+- **Capturing** — the reverse: starts at `document` and flows **downward** toward the target element.
+- **DOM Level 2 event flow** has three phases in order: **capturing** (top → target), **target** (fires on the clicked element itself), **bubbling** (target → top back up). By default, `addEventListener` listens during the bubbling phase; pass a third argument `true` to listen during capturing instead.
+- `event.stopPropagation()` — stops the event from continuing to bubble/capture further up or down the tree. Does **not** cancel the browser's default behavior (that's `preventDefault()`'s job — the two are independent).
+- `event.preventDefault()` — cancels the default browser action, but does **not** stop the event from continuing to bubble.
+- **Other event object properties:** `target` (element event occurred on) vs `currentTarget` (element the *current* handler is attached to — differs from `target` when the event is being handled during bubbling on an ancestor); `type` (event name, e.g. `"click"`); `bubbles`/`cancelable` (booleans describing the event type itself); `defaultPrevented` (true once `preventDefault()` was called).
+- The event object only exists for the duration of the handler(s) running — it's discarded afterward.
