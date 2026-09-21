@@ -418,3 +418,62 @@ Book.prototype.info = function() {
 ## Factory Functions and the Module Pattern (TOP)
 
 https://www.theodinproject.com/lessons/node-path-javascript-factory-functions-and-the-module-pattern
+
+- **Scope recap:** `var` is function-scoped (leaks out of `if`/`for` blocks); `let`/`const` are block-scoped (confined to the nearest `{ }`).
+- **Closures:** a function "remembers" the variables that were in scope when it was created (its lexical environment), even after the outer function has finished running.
+
+```javascript
+function makeAddingFunction(firstNumber) {
+  return function(secondNumber) {
+    return firstNumber + secondNumber;
+  }
+}
+const add5 = makeAddingFunction(5);
+add5(2); // 7 — firstNumber (5) is still "remembered"
+```
+
+- **Why factory functions exist:** constructors have gripes — no built-in safeguard against forgetting `new` (function just runs wrong), and `instanceof` only checks the prototype chain, which doesn't reliably prove what a constructor actually built.
+- **Factory function = plain function that returns an object.** No `new`, no prototype involvement (small perf cost per instance, but negligible unless creating thousands of objects).
+
+```javascript
+function createUser(name) {
+  const discordName = "@" + name;
+  return { name, discordName }; // object shorthand: { name: name, discordName: discordName }
+}
+```
+
+- **Private variables via closure:** a variable declared inside the factory but *not* included in the returned object is inaccessible from outside — the only way in/out is through functions that are returned (getters/setters).
+
+```javascript
+function createUser(name) {
+  let reputation = 0;
+  const getReputation = () => reputation;
+  const giveReputation = () => { reputation++; };
+  return { name, getReputation, giveReputation };
+}
+```
+  - Pitfall: returning `reputation` directly in the object (`{ name, reputation }`) just copies its *current value* — it won't track future changes. Only closures (functions) keep the live link.
+
+- **Composition:** factories can pull in another factory's returned functions to build a "bigger" object — the factory equivalent of inheritance, but more flexible (take only what you need).
+
+```javascript
+function createPlayer(name, level) {
+  const { getReputation, giveReputation } = createUser(name);
+  const getLevel = () => level;
+  return { name, getReputation, giveReputation, getLevel };
+}
+// or via Object.assign({}, user, { getLevel, increaseLevel })
+```
+
+- **Module pattern / IIFE:** when you only need *one* instance of something (not a factory producing many), wrap the factory in an IIFE (Immediately Invoked Function Expression) — calls itself once, keeps its internals private, exposes only what's returned. Avoids naming/reusing the factory function.
+
+```javascript
+const calculator = (() => {
+  let lastResult;
+  const add = (a, b) => (lastResult = a + b);
+  const getLastResult = () => lastResult;
+  return { add, getLastResult };
+})();
+```
+
+- **Encapsulation** = the general principle behind all of this: bundle data + behavior together, expose only what's needed, hide the rest.
