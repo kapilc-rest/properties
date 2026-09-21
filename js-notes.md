@@ -336,3 +336,40 @@ This is exactly the same rule from before (`this` = whatever's before the dot at
 - Same reasoning: `Object.prototype instanceof Object` is `false` — `Object.prototype`'s own `[[Prototype]]` is `null`, so the walk finds nothing.
 - **`Function.prototype` has no `.prototype` property of its own** (`Function.prototype.prototype` is `undefined`) — it's deliberately not meant to be used as a constructor. So `SomeFn.prototype instanceof Function.prototype` throws `TypeError: ... has non-object prototype 'undefined' in instanceof check` — proof that not every function has a usable `.prototype`, even though functions get one by default when declared normally.
 - **`X instanceof null`** throws a *different* error (`Right-hand side of 'instanceof' is not an object`) — this fails immediately, before any chain walk starts, because `instanceof`'s right-hand side must itself be a valid object/function to consult at all; `null` doesn't qualify. Contrast with the `Function.prototype` case above, which fails *during* the walk (right-hand side is valid, but its `.prototype` to search for is missing).
+
+## Full Prototype Chain Map (reference diagram)
+
+```
+INSTANCES                    CONSTRUCTORS (functions)           THE ROOT
+
+player3 ────────┐            Player ─────────┐
+(instance of     │            (a function,     │
+ Player)         │             also an object)  │
+                 ▼                              ▼
+         Player.prototype              Function.prototype
+         { sayHello, sayName }         [Function (anonymous)]
+         (Player's instances           (every function's
+          inherit from here)            prototype inherits
+                 │                       from here — even
+                 │                       Function itself)
+                 │                              │
+                 └──────────────┬───────────────┘
+                                 ▼
+                          Object.prototype
+                     { valueOf, toString, hasOwnProperty, ... }
+                     [Object: null prototype] {}
+                     (the true root — EVERY chain ends up here)
+                                 │
+                                 ▼
+                                null
+                     (nothing above this — chain terminates)
+```
+
+**Reading the map:**
+- Left column: `player3 → Player.prototype → Object.prototype → null`
+- Right column: `Player → Function.prototype → Object.prototype → null` (true for **every** function, including `Object`, `Array`, `Function` itself)
+- Both columns **converge** at `Object.prototype` — the single shared root of every chain in JS, whether you started from an instance or from a function.
+- `.prototype` (dot property) is only ever read on the **function** side (top row) — it's what a function hands its future instances. `Object.getPrototypeOf(x)` is the tool for reading the **hidden link**, usable on anything (instance or function) to see what it actually inherits from.
+- **Instance-of-X reasoning:** "`A` inherits from `B.prototype`" is the same fact as "`A instanceof B`" — just two ways of phrasing the identical chain-membership check.
+- **Special case:** `Function.prototype` is itself a function (unusual — normally `.prototype`s are plain objects) but has **no `.prototype` of its own** — it's not meant to be used with `new`.
+- **Primitives** (`5`, `"hi"`) aren't on this map at all — they're temporarily auto-boxed into a wrapper object (e.g. `Number` instance) on property access, and *that wrapper* is what actually has a `[[Prototype]]`, landing it on the `Number.prototype → Object.prototype → null` sub-chain.
