@@ -386,3 +386,31 @@ player3 ────────┐            Player ────────�
 - An instance is a specific, individual object (its own data — `name`, `marker`) that shares access to a template's methods via the prototype link, without owning a copy of them.
 - **Being "an instance of X" is what grants access to `X.prototype`'s methods** without needing an own copy — this is the actual mechanism behind `player3.sayHello()` working despite `sayHello` never being `player3`'s own property.
 - An object can be an instance of **multiple** constructors simultaneously — whichever ones' `.prototype` appears anywhere in its chain, not just the nearest one. `player3` is an instance of both `Player` (direct) and `Object` (via `Object.prototype` further up the same chain).
+
+## `call()` and `bind()` — borrowing methods
+
+- **`call(thisValue, ...args)`** — runs a function **immediately**, with `this` set to `thisValue`. Used to "borrow" a method that belongs to a different object (`car.describe.call(bike)`), or to run array methods on array-like non-arrays (`Array.prototype.reduce.call(arguments, ...)`).
+- **`bind(thisValue)`** — does **not** run the function; returns a **new function** with `this` permanently locked to `thisValue`, to be called later. Use when handing a method off somewhere to be called later (event listener, callback, `setTimeout`) — without `bind`, extracting a method loses its `this` binding (the "extracting a method into a variable" gotcha from earlier).
+- **Rule of thumb:** `call()` when you want the result right now, once. `bind()` when the function is going elsewhere to be called later, possibly multiple times.
+- `bind()` can also pre-fill leading arguments (partial application), not just `this`: `multiply.bind(null, 2)` locks the first argument to `2`.
+
+## Ternary operator
+
+- `condition ? valueIfTrue : valueIfFalse` — a compact one-expression if/else, evaluating to one of two values. Equivalent to a full `if/else` block that assigns to a variable, but usable inline (e.g. directly inside a template literal `${...}`).
+- Works with any truthy/falsy value, not strictly `true`/`false` — so it's technically permissive, but intended to be used with actual booleans for type safety (e.g. `this.read ? "read" : "not read yet"` expects `this.read` to genuinely be a boolean).
+
+## Book Constructor Exercise (TOP)
+
+```javascript
+function Book(title, author, pages, read) {
+  this.title = title;
+  this.author = author;
+  this.pages = pages;
+  this.read = read;
+}
+Book.prototype.info = function() {
+  return `${this.title} by ${this.author}, ${this.pages} pages, ${this.read ? "read" : "not read yet"}`;
+};
+```
+- One constructor parameter per property — straightforward mapping.
+- `info()` put on `.prototype` rather than inside the constructor (via `this.info = ...`) — since it's identical for every book, no reason to pay the per-instance duplication cost.
