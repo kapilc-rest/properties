@@ -414,3 +414,7 @@ Book.prototype.info = function() {
 ```
 - One constructor parameter per property — straightforward mapping.
 - `info()` put on `.prototype` rather than inside the constructor (via `this.info = ...`) — since it's identical for every book, no reason to pay the per-instance duplication cost.
+
+## Factory Functions and the Module Pattern (TOP)
+
+https://www.theodinproject.com/lessons/node-path-javascript-factory-functions-and-the-module-pattern
