@@ -313,3 +313,12 @@ This is exactly the same rule from before (`this` = whatever's before the dot at
   - **`[Object: null prototype]`** — an extra label Node adds *only* when the object's **own** `[[Prototype]]` is `null` (i.e. `Object.getPrototypeOf(thisThing) === null`). Flags an unusual case, since almost every object (even a bare `{}` you type yourself) has *some* prototype.
 - Don't conflate "`Object.prototype`'s own `[[Prototype]]` is `null`" (true — nothing above it in the chain) with "`Object.prototype` itself is empty/nonexistent" (false — it's a real, populated object; its content is just hidden by non-enumerability).
 - To actually see the hidden non-enumerable methods: `Object.getOwnPropertyNames(Object.prototype)` — unlike `Object.keys()`, this lists non-enumerable own properties too.
+
+## When Does the Prototype Chain Actually Get Walked?
+
+- The chain walk is triggered by **any property/method read** — not a special "look up the chain" action you consciously invoke. Every property access in JS runs the same lookup algorithm: check the object's own properties first, then walk `[[Prototype]]` upward until found or `null` is reached.
+- It *looks* instant and chain-free when a property is found directly on the object (step one) — but that's just early termination of the same uniform algorithm, not the chain being skipped as a special case.
+- **Writes never walk the chain** — `obj.x = value` always creates/overwrites an *own* property directly on `obj`, regardless of whether something called `x` exists further up the chain (exception: setters, which are calls in disguise — see the earlier prototypal inheritance note).
+- **Method calls** (`obj.method()`) are just a property read (`obj.method`) followed immediately by a call — so they trigger the walk the same as any other read.
+- **Auto-boxing is the primitive-specific on-ramp to this same mechanism** — primitives have no chain of their own, so JS temporarily wraps them in a wrapper object first, and only *then* does the normal read → walk-if-needed process apply, to that wrapper.
+- Net rule: **every read (including ones satisfied instantly by an own property, and ones on primitives via auto-boxing) goes through the same check-own-then-walk-chain lookup — it's uniform, not conditional.**
