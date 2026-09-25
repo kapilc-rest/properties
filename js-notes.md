@@ -477,3 +477,16 @@ const calculator = (() => {
 ```
 
 - **Encapsulation** = the general principle behind all of this: bundle data + behavior together, expose only what's needed, hide the rest.
+
+## Shorthand Property Syntax
+
+- `{ name, age, color }` is parser-level sugar for `{ name: name, age: age, color: color }` — when the parser sees a bare identifier in an object literal, it uses that identifier as both the property key (as a string) and a reference to an existing variable of that name for the value.
+- Purely a parse-time transformation — the parser generates the identical AST either way, so there's zero runtime difference between shorthand and explicit form.
+- **Requires a variable of the exact same name to already exist in scope** — `{ name }` with no `name` variable declared throws a `ReferenceError`, same as referencing any undeclared variable.
+- Only works when property name and variable name match; use the explicit `key: value` form when they differ (e.g. `arr.map(x => ({ key: x }))`).
+
+## Why objects use commas, not semicolons
+
+- Object literal `key: value` pairs, array elements, and function arguments are all the same grammatical category — a **comma-separated list**, not a sequence of statements. Comma is JS's universal "next item in a list" separator.
+- Semicolons terminate **statements** (`let x = 5;`, `return y;`) — standalone instructions that do something. An object/array literal is a single **expression** (evaluates to one value), so there's no individual "statement" for `;` to terminate after each property.
+- This holds even for object methods written with function syntax — the function body inside uses `;` for its own internal statements, but the *properties of the object itself* are still comma-separated, since the object as a whole is still a list.
