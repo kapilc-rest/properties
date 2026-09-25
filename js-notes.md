@@ -490,3 +490,51 @@ const calculator = (() => {
 - Object literal `key: value` pairs, array elements, and function arguments are all the same grammatical category — a **comma-separated list**, not a sequence of statements. Comma is JS's universal "next item in a list" separator.
 - Semicolons terminate **statements** (`let x = 5;`, `return y;`) — standalone instructions that do something. An object/array literal is a single **expression** (evaluates to one value), so there's no individual "statement" for `;` to terminate after each property.
 - This holds even for object methods written with function syntax — the function body inside uses `;` for its own internal statements, but the *properties of the object itself* are still comma-separated, since the object as a whole is still a list.
+
+## Destructuring
+
+Unpacks values from arrays or properties from objects directly into distinct variables — the reverse operation of building an array/object literal.
+
+**Array destructuring** (position-based):
+```javascript
+const [a, b, c] = [1, 2, 3];       // a=1, b=2, c=3
+const [a, , c] = [1, 2, 3];         // skip an element with a blank spot: a=1, c=3
+const [a, b, ...rest] = [1, 2, 3, 4]; // rest = [3, 4]
+```
+- Fewer elements than variables → extra variables are `undefined` (no error).
+- Swapping variables in one line: `[a, b] = [b, a]`.
+- Works on **any iterable**, not just arrays (e.g. destructuring a `Map`) — but throws on genuinely non-iterable objects.
+
+**Object destructuring** (name-based, matches by property key, not position):
+```javascript
+const { a, b } = obj;                      // pulls obj.a, obj.b into same-named variables — same mechanism as shorthand property syntax, reversed
+const { a: renamed } = obj;                 // rename while unpacking
+const { a: renamed = defaultVal } = obj;    // rename + default combined
+const { a, ...rest } = obj;                  // rest = obj minus already-picked keys
+```
+
+**Default values** (works for both array and object forms): only kick in when the value is **`undefined`** — NOT for `null`.
+```javascript
+const [x = 1] = [];              // x = 1
+const { y = 2 } = { y: undefined }; // y = 2
+const { z = 2 } = { z: null };      // z = null — default does NOT apply here
+```
+Default value expressions are lazily evaluated — only computed if actually needed (e.g. a default that calls a function won't run that function if the real value was already present).
+
+**Destructuring function parameters** — very common, especially for objects passed as a single "options" argument:
+```javascript
+function userId({ id }) { return id; }
+function drawChart({ size = "big", coords = { x: 0, y: 0 } } = {}) { ... }
+```
+The `= {}` at the very end of the parameter list matters: without it, calling `drawChart()` with zero arguments throws, since there'd be nothing to destructure from. Ties back to the earlier note: destructuring an object property from `undefined`/`null` throws a `TypeError`.
+
+**Nested destructuring** — reach into nested objects/arrays directly:
+```javascript
+const { family: { father } } = person;   // pulls person.family.father directly into `father`
+```
+
+**Destructuring primitives works too** (via auto-boxing, same mechanism as before) — `const { toFixed } = 1;` temporarily boxes `1` into a `Number` wrapper to pull `toFixed` off it.
+
+**Prototype chain is respected during destructuring** — if a property isn't own, the lookup walks up `[[Prototype]]`, same as normal property access (consistent with everything already covered about how property reads work).
+
+**Binding vs assignment patterns:** `const {a, b} = obj` (declares new variables) vs. destructuring into *existing* variables without a declaration keyword — the latter needs wrapping parens: `({a, b} = obj);` — otherwise `{` at the start of a statement is parsed as a block, not an object pattern (same `{` ambiguity issue as arrow function bodies from earlier).
